@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: portfolio-api
+  datasource:
+    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:portfolio}
+    username: ${PGUSER:portfolio}
+    password: ${PGPASSWORD:portfolio}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: ${SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+portfolio:
+  cors:
+    allowed-origin: ${FRONTEND_ORIGIN:http://localhost:4200}
