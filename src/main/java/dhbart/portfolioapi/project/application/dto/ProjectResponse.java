@@ -1,5 +1,8 @@
 package dhbart.portfolioapi.project.application.dto;
 
+import dhbart.portfolioapi.technology.application.dto.TechnologyResponse;
+import java.util.List;
+
 public record ProjectResponse(
         Long id,
         String slug,
@@ -12,6 +15,7 @@ public record ProjectResponse(
         String githubUrl,
         String demoUrl,
         Boolean featured,
-        Integer displayOrder
+        Integer displayOrder,
+        List<TechnologyResponse> technologies
 ) {
 }
