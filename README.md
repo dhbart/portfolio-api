@@ -155,11 +155,11 @@ O projeto está preparado para disponibilizar documentação OpenAPI por meio do
 - [x] Criar o projeto Spring Boot;
 - [x] Configurar Java 25 e Gradle 9.7.0;
 - [x] Adicionar as dependências principais;
-- [ ] Criar a documentação de arquitetura;
-- [ ] Configurar PostgreSQL;
-- [ ] Configurar migrations com Flyway;
-- [ ] Implementar o domínio `Hero`;
-- [ ] Criar o endpoint `GET /api/hero`;
+- [x] Criar a documentação de arquitetura;
+- [x] Configurar PostgreSQL;
+- [x] Configurar migrations com Flyway;
+- [x] Implementar o domínio `Hero`;
+- [x] Criar o endpoint `GET /api/v1/hero`;
 - [ ] Implementar os demais domínios do portfólio;
 - [ ] Integrar o frontend Angular;
 - [ ] Adicionar autenticação para operações administrativas;
