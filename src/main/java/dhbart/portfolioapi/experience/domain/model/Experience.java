@@ -20,6 +20,8 @@ public class Experience {
     @NotNull
     private Long id;
 
+    private String locale;
+
     @NotBlank
     private String company;
 

@@ -15,6 +15,9 @@ public class ProjectEntity {
     @Id
     private Long id;
 
+    @Column(nullable = false, length = 10)
+    private String locale;
+
     @Column(nullable = false, unique = true)
     private String slug;
 
@@ -57,11 +60,12 @@ public class ProjectEntity {
     protected ProjectEntity() {
     }
 
-    public ProjectEntity(Long id, String slug, String title, String headline, String description,
+    public ProjectEntity(Long id, String locale, String slug, String title, String headline, String description,
                          String challenge, String solution, String imageUrl, String githubUrl,
                          String demoUrl, Boolean featured, Integer displayOrder,
                          Instant createdAt, Instant updatedAt) {
         this.id = id;
+        this.locale = locale;
         this.slug = slug;
         this.title = title;
         this.headline = headline;
@@ -90,6 +94,7 @@ public class ProjectEntity {
     }
 
     public Long getId() { return id; }
+    public String getLocale() { return locale; }
     public String getSlug() { return slug; }
     public String getTitle() { return title; }
     public String getHeadline() { return headline; }

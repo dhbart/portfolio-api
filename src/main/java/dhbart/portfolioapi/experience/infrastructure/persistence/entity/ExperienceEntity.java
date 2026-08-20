@@ -19,6 +19,9 @@ public class ExperienceEntity {
     @Id
     private Long id;
 
+    @Column(nullable = false, length = 10)
+    private String locale;
+
     @Column(nullable = false)
     private String company;
 
@@ -66,12 +69,13 @@ public class ExperienceEntity {
     protected ExperienceEntity() {
     }
 
-    public ExperienceEntity(Long id, String company, String location, String period, String position,
+    public ExperienceEntity(Long id, String locale, String company, String location, String period, String position,
                             String summary, List<String> description, List<String> highlights,
                             List<String> technologies,
                             LocalDate startDate, LocalDate endDate, Boolean currentPosition,
                             Integer displayOrder, Instant createdAt, Instant updatedAt) {
         this.id = id;
+        this.locale = locale;
         this.company = company;
         this.location = location;
         this.period = period;
@@ -101,6 +105,7 @@ public class ExperienceEntity {
     }
 
     public Long getId() { return id; }
+    public String getLocale() { return locale; }
     public String getCompany() { return company; }
     public String getLocation() { return location; }
     public String getPeriod() { return period; }

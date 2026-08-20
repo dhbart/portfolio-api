@@ -15,6 +15,9 @@ public class HeroEntity {
     @Id
     private Long id;
 
+    @Column(nullable = false, length = 10)
+    private String locale;
+
     @Column(nullable = false)
     private String greeting;
 
@@ -48,11 +51,12 @@ public class HeroEntity {
     protected HeroEntity() {
     }
 
-    public HeroEntity(Long id, String greeting, String name, String title, String description,
+    public HeroEntity(Long id, String locale, String greeting, String name, String title, String description,
                       String primaryButtonLabel, String primaryButtonUrl,
                       String secondaryButtonLabel, String secondaryButtonUrl,
                       Instant createdAt, Instant updatedAt) {
         this.id = id;
+        this.locale = locale;
         this.greeting = greeting;
         this.name = name;
         this.title = title;
@@ -78,6 +82,7 @@ public class HeroEntity {
     }
 
     public Long getId() { return id; }
+    public String getLocale() { return locale; }
     public String getGreeting() { return greeting; }
     public String getName() { return name; }
     public String getTitle() { return title; }

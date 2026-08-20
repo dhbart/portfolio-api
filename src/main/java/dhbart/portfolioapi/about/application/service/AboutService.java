@@ -4,6 +4,7 @@ import dhbart.portfolioapi.about.application.dto.AboutResponse;
 import dhbart.portfolioapi.about.application.mapper.AboutMapper;
 import dhbart.portfolioapi.about.domain.repository.AboutRepository;
 import dhbart.portfolioapi.exception.ResourceNotFoundException;
+import dhbart.portfolioapi.localization.application.service.LocaleResolver;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,19 +12,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AboutService {
 
-    private static final long ABOUT_ID = 1L;
-
     private final AboutRepository aboutRepository;
     private final AboutMapper aboutMapper;
+    private final LocaleResolver localeResolver;
 
-    public AboutService(AboutRepository aboutRepository, AboutMapper aboutMapper) {
+    public AboutService(AboutRepository aboutRepository, AboutMapper aboutMapper, LocaleResolver localeResolver) {
         this.aboutRepository = aboutRepository;
         this.aboutMapper = aboutMapper;
+        this.localeResolver = localeResolver;
     }
 
-    public AboutResponse findAbout() {
-        return aboutRepository.findById(ABOUT_ID)
-                .map(aboutMapper::toResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("About content not found"));
+    public AboutResponse findAbout(String acceptLanguage) {
+        for (String locale : localeResolver.resolve(acceptLanguage)) {
+            var about = aboutRepository.findByLocale(locale);
+            if (about.isPresent()) return aboutMapper.toResponse(about.get());
+        }
+        throw new ResourceNotFoundException("About content not found");
     }
 }

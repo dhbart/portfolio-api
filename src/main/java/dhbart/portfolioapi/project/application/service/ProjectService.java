@@ -7,6 +7,7 @@ import dhbart.portfolioapi.project.domain.repository.ProjectRepository;
 import dhbart.portfolioapi.project.domain.repository.ProjectTechnologyRepository;
 import dhbart.portfolioapi.technology.application.mapper.TechnologyMapper;
 import dhbart.portfolioapi.exception.ResourceNotFoundException;
+import dhbart.portfolioapi.localization.application.service.LocaleResolver;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -20,19 +21,22 @@ public class ProjectService {
     private final ProjectTechnologyRepository projectTechnologyRepository;
     private final ProjectMapper projectMapper;
     private final TechnologyMapper technologyMapper;
+    private final LocaleResolver localeResolver;
 
     public ProjectService(ProjectRepository projectRepository,
                           ProjectTechnologyRepository projectTechnologyRepository,
                           ProjectMapper projectMapper,
-                          TechnologyMapper technologyMapper) {
+                          TechnologyMapper technologyMapper,
+                          LocaleResolver localeResolver) {
         this.projectRepository = projectRepository;
         this.projectTechnologyRepository = projectTechnologyRepository;
         this.projectMapper = projectMapper;
         this.technologyMapper = technologyMapper;
+        this.localeResolver = localeResolver;
     }
 
-    public List<ProjectResponse> findAllProjects() {
-        var projects = projectRepository.findAllByOrderByDisplayOrderAsc();
+    public List<ProjectResponse> findAllProjects(String acceptLanguage) {
+        var projects = localizedProjects(acceptLanguage);
         var technologiesByProjectId = projectTechnologyRepository
                 .findAllByProjectIdInOrderByProjectIdAscDisplayOrderAsc(
                         projects.stream().map(Project::getId).toList())
@@ -48,10 +52,20 @@ public class ProjectService {
                 .toList();
     }
 
-    public ProjectResponse findProject(String slug) {
-        return projectRepository.findBySlug(slug)
-                .map(this::toResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+    public ProjectResponse findProject(String slug, String acceptLanguage) {
+        for (String locale : localeResolver.resolve(acceptLanguage)) {
+            var project = projectRepository.findBySlugAndLocale(slug, locale);
+            if (project.isPresent()) return toResponse(project.get());
+        }
+        throw new ResourceNotFoundException("Project not found");
+    }
+
+    private List<Project> localizedProjects(String acceptLanguage) {
+        for (String locale : localeResolver.resolve(acceptLanguage)) {
+            var projects = projectRepository.findAllByLocaleOrderByDisplayOrderAsc(locale);
+            if (!projects.isEmpty()) return projects;
+        }
+        return List.of();
     }
 
     private ProjectResponse toResponse(Project project) {

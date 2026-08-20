@@ -10,6 +10,7 @@ public class ProjectEntityMapper {
     public Project toDomain(ProjectEntity entity) {
         return Project.builder()
                 .id(entity.getId())
+                .locale(entity.getLocale())
                 .slug(entity.getSlug())
                 .title(entity.getTitle())
                 .headline(entity.getHeadline())
@@ -26,7 +27,7 @@ public class ProjectEntityMapper {
 
     public ProjectEntity toEntity(Project project) {
         return new ProjectEntity(
-                project.getId(), project.getSlug(), project.getTitle(), project.getHeadline(),
+                project.getId(), project.getLocale(), project.getSlug(), project.getTitle(), project.getHeadline(),
                 project.getDescription(), project.getChallenge(), project.getSolution(),
                 project.getImageUrl(), project.getGithubUrl(), project.getDemoUrl(),
                 project.getFeatured(), project.getDisplayOrder(), null, null);

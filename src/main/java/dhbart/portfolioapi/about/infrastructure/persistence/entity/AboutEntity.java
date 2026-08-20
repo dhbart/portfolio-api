@@ -15,6 +15,9 @@ public class AboutEntity {
     @Id
     private Long id;
 
+    @Column(nullable = false, length = 10)
+    private String locale;
+
     @Column(nullable = false)
     private String title;
 
@@ -30,8 +33,9 @@ public class AboutEntity {
     protected AboutEntity() {
     }
 
-    public AboutEntity(Long id, String title, String description, Instant createdAt, Instant updatedAt) {
+    public AboutEntity(Long id, String locale, String title, String description, Instant createdAt, Instant updatedAt) {
         this.id = id;
+        this.locale = locale;
         this.title = title;
         this.description = description;
         this.createdAt = createdAt;
@@ -51,6 +55,7 @@ public class AboutEntity {
     }
 
     public Long getId() { return id; }
+    public String getLocale() { return locale; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
     public Instant getCreatedAt() { return createdAt; }

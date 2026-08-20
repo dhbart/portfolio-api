@@ -20,7 +20,12 @@ public class AboutRepositoryImpl implements AboutRepository {
     }
 
     @Override
-    public Optional<About> findById(Long id) {
-        return repository.findById(id).map(mapper::toDomain);
+    public Optional<About> findByLocale(String locale) {
+        return repository.findByLocale(locale).map(mapper::toDomain);
+    }
+
+    @Override
+    public Optional<About> findByIdAndLocale(Long id, String locale) {
+        return repository.findByIdAndLocale(id, locale).map(mapper::toDomain);
     }
 }

@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 interface ExperienceJpaRepository extends JpaRepository<ExperienceEntity, Long> {
 
-    List<ExperienceEntity> findAllByOrderByDisplayOrderDesc();
+    List<ExperienceEntity> findAllByLocaleOrderByDisplayOrderDesc(String locale);
 }

@@ -21,14 +21,14 @@ public class ProjectRepositoryImpl implements ProjectRepository {
     }
 
     @Override
-    public List<Project> findAllByOrderByDisplayOrderAsc() {
-        return repository.findAllByOrderByDisplayOrderAsc().stream()
+    public List<Project> findAllByLocaleOrderByDisplayOrderAsc(String locale) {
+        return repository.findAllByLocaleOrderByDisplayOrderAsc(locale).stream()
                 .map(mapper::toDomain)
                 .toList();
     }
 
     @Override
-    public Optional<Project> findBySlug(String slug) {
-        return repository.findBySlug(slug).map(mapper::toDomain);
+    public Optional<Project> findBySlugAndLocale(String slug, String locale) {
+        return repository.findBySlugAndLocale(slug, locale).map(mapper::toDomain);
     }
 }

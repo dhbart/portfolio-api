@@ -10,6 +10,7 @@ public class AboutEntityMapper {
     public About toDomain(AboutEntity entity) {
         return About.builder()
                 .id(entity.getId())
+                .locale(entity.getLocale())
                 .title(entity.getTitle())
                 .description(entity.getDescription())
                 .build();
@@ -17,6 +18,6 @@ public class AboutEntityMapper {
 
     public AboutEntity toEntity(About about) {
         return new AboutEntity(
-                about.getId(), about.getTitle(), about.getDescription(), null, null);
+                about.getId(), about.getLocale(), about.getTitle(), about.getDescription(), null, null);
     }
 }

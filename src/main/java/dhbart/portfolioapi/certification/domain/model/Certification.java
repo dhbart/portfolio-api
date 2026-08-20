@@ -19,6 +19,8 @@ public class Certification {
     @NotNull
     private Long id;
 
+    private String locale;
+
     @NotBlank
     private String title;
 

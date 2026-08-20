@@ -5,5 +5,7 @@ import java.util.Optional;
 
 public interface AboutRepository {
 
-    Optional<About> findById(Long id);
+    Optional<About> findByLocale(String locale);
+
+    Optional<About> findByIdAndLocale(Long id, String locale);
 }

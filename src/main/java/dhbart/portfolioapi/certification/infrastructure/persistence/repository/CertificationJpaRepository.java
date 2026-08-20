@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 interface CertificationJpaRepository extends JpaRepository<CertificationEntity, Long> {
 
-    List<CertificationEntity> findAllByOrderByDisplayOrderAsc();
+    List<CertificationEntity> findAllByLocaleOrderByDisplayOrderAsc(String locale);
 }

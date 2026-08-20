@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 interface ProjectJpaRepository extends JpaRepository<ProjectEntity, Long> {
 
-    List<ProjectEntity> findAllByOrderByDisplayOrderAsc();
+    List<ProjectEntity> findAllByLocaleOrderByDisplayOrderAsc(String locale);
 
-    Optional<ProjectEntity> findBySlug(String slug);
+    Optional<ProjectEntity> findBySlugAndLocale(String slug, String locale);
 }

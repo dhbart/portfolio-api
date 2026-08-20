@@ -18,6 +18,8 @@ public class Project {
     @NotNull
     private Long id;
 
+    private String locale;
+
     @NotBlank
     private String slug;
 

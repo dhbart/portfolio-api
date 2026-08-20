@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface ExperienceRepository {
 
-    List<Experience> findAllByOrderByDisplayOrderDesc();
+    List<Experience> findAllByLocaleOrderByDisplayOrderDesc(String locale);
 }

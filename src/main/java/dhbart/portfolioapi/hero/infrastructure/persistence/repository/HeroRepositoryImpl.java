@@ -20,6 +20,16 @@ public class HeroRepositoryImpl implements HeroRepository {
     }
 
     @Override
+    public Optional<Hero> findByLocale(String locale) {
+        return repository.findByLocale(locale).map(mapper::toDomain);
+    }
+
+    @Override
+    public Optional<Hero> findByIdAndLocale(Long id, String locale) {
+        return repository.findByIdAndLocale(id, locale).map(mapper::toDomain);
+    }
+
+    @Override
     public Optional<Hero> findById(Long id) {
         return repository.findById(id).map(mapper::toDomain);
     }

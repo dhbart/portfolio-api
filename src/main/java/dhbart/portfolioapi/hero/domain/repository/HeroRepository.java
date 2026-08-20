@@ -5,5 +5,11 @@ import java.util.Optional;
 
 public interface HeroRepository {
 
-    Optional<Hero> findById(Long id);
+    Optional<Hero> findByLocale(String locale);
+
+    Optional<Hero> findByIdAndLocale(Long id, String locale);
+
+    default Optional<Hero> findById(Long id) {
+        return findByIdAndLocale(id, "pt-BR");
+    }
 }

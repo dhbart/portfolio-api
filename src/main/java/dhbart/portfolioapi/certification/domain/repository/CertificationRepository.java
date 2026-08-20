@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface CertificationRepository {
 
-    List<Certification> findAllByOrderByDisplayOrderAsc();
+    List<Certification> findAllByLocaleOrderByDisplayOrderAsc(String locale);
 }

@@ -10,6 +10,7 @@ public class HeroEntityMapper {
     public Hero toDomain(HeroEntity entity) {
         return Hero.builder()
                 .id(entity.getId())
+                .locale(entity.getLocale())
                 .greeting(entity.getGreeting())
                 .name(entity.getName())
                 .title(entity.getTitle())
@@ -23,7 +24,7 @@ public class HeroEntityMapper {
 
     public HeroEntity toEntity(Hero hero) {
         return new HeroEntity(
-                hero.getId(), hero.getGreeting(), hero.getName(), hero.getTitle(), hero.getDescription(),
+                hero.getId(), hero.getLocale(), hero.getGreeting(), hero.getName(), hero.getTitle(), hero.getDescription(),
                 hero.getPrimaryButtonLabel(), hero.getPrimaryButtonUrl(),
                 hero.getSecondaryButtonLabel(), hero.getSecondaryButtonUrl(), null, null);
     }

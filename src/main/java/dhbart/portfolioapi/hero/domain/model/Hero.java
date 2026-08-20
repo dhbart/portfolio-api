@@ -18,6 +18,8 @@ public class Hero {
     @NotNull
     private Long id;
 
+    private String locale;
+
     private String greeting;
 
     @NotBlank

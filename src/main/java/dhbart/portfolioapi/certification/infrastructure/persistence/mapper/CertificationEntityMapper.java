@@ -10,6 +10,7 @@ public class CertificationEntityMapper {
     public Certification toDomain(CertificationEntity entity) {
         return Certification.builder()
                 .id(entity.getId())
+                .locale(entity.getLocale())
                 .title(entity.getTitle())
                 .issuer(entity.getIssuer())
                 .description(entity.getDescription())
@@ -24,7 +25,7 @@ public class CertificationEntityMapper {
 
     public CertificationEntity toEntity(Certification certification) {
         return new CertificationEntity(
-                certification.getId(), certification.getTitle(), certification.getIssuer(), certification.getDescription(),
+                certification.getId(), certification.getLocale(), certification.getTitle(), certification.getIssuer(), certification.getDescription(),
                 certification.getCertificationType(), certification.getIssueDate(), certification.getCredentialCode(),
                 certification.getCredentialUrl(), certification.getImageUrl(), certification.getDisplayOrder(), null, null);
     }

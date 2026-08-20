@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -19,7 +20,7 @@ public class ExperienceController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ExperienceResponse>> getExperiences() {
-        return ResponseEntity.ok(experienceService.findAllExperiences());
+    public ResponseEntity<List<ExperienceResponse>> getExperiences(@RequestHeader(name = "Accept-Language", required = false) String acceptLanguage) {
+        return ResponseEntity.ok(experienceService.findAllExperiences(acceptLanguage));
     }
 }

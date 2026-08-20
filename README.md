@@ -33,9 +33,9 @@ Disponibilizar uma API para gerenciar e expor as informações profissionais do 
 - JUnit
 - Testcontainers
 
-## Arquitetura planejada
+## Arquitetura atual
 
-O backend seguirá uma arquitetura em camadas:
+O backend usa arquitetura feature-first. Cada domínio possui `application`, `domain` e `infrastructure`, mantendo o fluxo:
 
 ```text
 Controller
@@ -47,7 +47,7 @@ Repository
 PostgreSQL
 ```
 
-Os contratos da API serão definidos por DTOs, mantendo as entidades de persistência separadas da camada HTTP.
+Os contratos da API são definidos por DTOs, mantendo as entidades de persistência separadas da camada HTTP.
 
 ## Estrutura do projeto
 
@@ -60,7 +60,7 @@ src/
     └── java/dhbart/portfolioapi/
 ```
 
-As camadas da aplicação serão organizadas conforme o projeto evoluir:
+Cada feature é organizada da seguinte forma:
 
 ```text
 config/
@@ -112,7 +112,7 @@ Em sistemas Unix-like:
 ./gradlew bootRun
 ```
 
-Por enquanto, a aplicação inicia apenas o contexto básico do Spring Boot. A configuração de banco de dados e os endpoints serão adicionados nas próximas etapas.
+Ao iniciar, o Flyway valida o schema PostgreSQL e os endpoints públicos ficam disponíveis sem autenticação.
 
 O health check está disponível em `http://localhost:8080/actuator/health`.
 
@@ -148,7 +148,11 @@ Os testes de integração utilizarão Testcontainers para executar dependências
 
 ## Documentação da API
 
-O projeto está preparado para disponibilizar documentação OpenAPI por meio do Springdoc. A URL será definida quando os primeiros endpoints REST forem implementados.
+Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+
+OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+
+Todos os endpoints REST de leitura aparecem na especificação OpenAPI.
 
 ## Roadmap
 
@@ -160,9 +164,13 @@ O projeto está preparado para disponibilizar documentação OpenAPI por meio do
 - [x] Configurar migrations com Flyway;
 - [x] Implementar o domínio `Hero`;
 - [x] Criar o endpoint `GET /api/v1/hero`;
-- [ ] Implementar os demais domínios do portfólio;
+- [x] Implementar os domínios de leitura do portfólio;
+- [x] Padronizar tratamento global de exceções;
+- [x] Eliminar N+1 na listagem de Projects;
+- [x] Preparar a infraestrutura de segurança pública;
+- [x] Verificar a documentação OpenAPI;
 - [ ] Integrar o frontend Angular;
-- [ ] Adicionar autenticação para operações administrativas;
+- [ ] Adicionar autenticação JWT quando operações administrativas forem criadas;
 - [ ] Preparar o deploy.
 
 ## Projeto relacionado

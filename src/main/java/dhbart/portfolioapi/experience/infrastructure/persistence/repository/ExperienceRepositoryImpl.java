@@ -20,8 +20,8 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
     }
 
     @Override
-    public List<Experience> findAllByOrderByDisplayOrderDesc() {
-        return repository.findAllByOrderByDisplayOrderDesc().stream()
+    public List<Experience> findAllByLocaleOrderByDisplayOrderDesc(String locale) {
+        return repository.findAllByLocaleOrderByDisplayOrderDesc(locale).stream()
                 .map(mapper::toDomain)
                 .toList();
     }

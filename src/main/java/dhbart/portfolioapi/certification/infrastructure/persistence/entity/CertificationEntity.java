@@ -19,6 +19,9 @@ public class CertificationEntity {
     @Id
     private Long id;
 
+    @Column(nullable = false, length = 10)
+    private String locale;
+
     @Column(nullable = false)
     private String title;
 
@@ -48,11 +51,12 @@ public class CertificationEntity {
     protected CertificationEntity() {
     }
 
-    public CertificationEntity(Long id, String title, String issuer, String description,
+    public CertificationEntity(Long id, String locale, String title, String issuer, String description,
                                CertificationType certificationType, LocalDate issueDate, String credentialCode,
                                String credentialUrl, String imageUrl, Integer displayOrder,
                                Instant createdAt, Instant updatedAt) {
         this.id = id;
+        this.locale = locale;
         this.title = title;
         this.issuer = issuer;
         this.description = description;
@@ -79,6 +83,7 @@ public class CertificationEntity {
     }
 
     public Long getId() { return id; }
+    public String getLocale() { return locale; }
     public String getTitle() { return title; }
     public String getIssuer() { return issuer; }
     public String getDescription() { return description; }

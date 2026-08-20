@@ -10,6 +10,7 @@ public class ExperienceEntityMapper {
     public Experience toDomain(ExperienceEntity entity) {
         return Experience.builder()
                 .id(entity.getId())
+                .locale(entity.getLocale())
                 .company(entity.getCompany())
                 .location(entity.getLocation())
                 .period(entity.getPeriod())
@@ -27,7 +28,7 @@ public class ExperienceEntityMapper {
 
     public ExperienceEntity toEntity(Experience experience) {
         return new ExperienceEntity(
-                experience.getId(), experience.getCompany(), experience.getLocation(), experience.getPeriod(),
+                experience.getId(), experience.getLocale(), experience.getCompany(), experience.getLocation(), experience.getPeriod(),
                 experience.getPosition(), experience.getSummary(), experience.getDescription(),
                 experience.getHighlights(), experience.getTechnologies(), experience.getStartDate(), experience.getEndDate(),
                 experience.getCurrentPosition(), experience.getDisplayOrder(), null, null);

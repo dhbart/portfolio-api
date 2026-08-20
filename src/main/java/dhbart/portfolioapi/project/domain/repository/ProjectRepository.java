@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface ProjectRepository {
 
-    List<Project> findAllByOrderByDisplayOrderAsc();
+    List<Project> findAllByLocaleOrderByDisplayOrderAsc(String locale);
 
-    Optional<Project> findBySlug(String slug);
+    Optional<Project> findBySlugAndLocale(String slug, String locale);
 }

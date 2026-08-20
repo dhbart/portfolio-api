@@ -20,8 +20,8 @@ public class CertificationRepositoryImpl implements CertificationRepository {
     }
 
     @Override
-    public List<Certification> findAllByOrderByDisplayOrderAsc() {
-        return repository.findAllByOrderByDisplayOrderAsc().stream()
+    public List<Certification> findAllByLocaleOrderByDisplayOrderAsc(String locale) {
+        return repository.findAllByLocaleOrderByDisplayOrderAsc(locale).stream()
                 .map(mapper::toDomain)
                 .toList();
     }
