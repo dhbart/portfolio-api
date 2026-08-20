@@ -42,3 +42,10 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+tasks.register('syncIcons', JavaExec) {
+    group = 'development'
+    description = 'Synchronizes missing technology SVG icons from Devicon.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'dhbart.portfolioapi.support.icons.cli.IconSyncCli'
+}

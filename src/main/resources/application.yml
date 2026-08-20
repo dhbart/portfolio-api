@@ -1,6 +1,9 @@
 spring:
   application:
     name: portfolio-api
+  web:
+    resources:
+      static-locations: classpath:/static/
   datasource:
     url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:portfolio}
     username: ${PGUSER:portfolio}
