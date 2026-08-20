@@ -9,7 +9,7 @@ public class TechnologyMapper {
 
     public TechnologyResponse toResponse(Technology technology) {
         return new TechnologyResponse(
-                technology.getId(), technology.getName(), technology.getSlug(), technology.getIcon(),
+                technology.getId(), technology.getName(), technology.getSlug(),
                 technology.getWebsite(), technology.getDisplayOrder());
     }
 }

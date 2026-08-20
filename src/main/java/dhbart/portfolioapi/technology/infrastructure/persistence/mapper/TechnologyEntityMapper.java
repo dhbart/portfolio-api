@@ -12,7 +12,6 @@ public class TechnologyEntityMapper {
                 .id(entity.getId())
                 .name(entity.getName())
                 .slug(entity.getSlug())
-                .icon(entity.getIcon())
                 .website(entity.getWebsite())
                 .displayOrder(entity.getDisplayOrder())
                 .build();
@@ -20,6 +19,6 @@ public class TechnologyEntityMapper {
 
     public TechnologyEntity toEntity(Technology technology) {
         return new TechnologyEntity(technology.getId(), technology.getName(), technology.getSlug(),
-                technology.getIcon(), technology.getWebsite(), technology.getDisplayOrder(), null, null);
+                technology.getWebsite(), technology.getDisplayOrder(), null, null);
     }
 }

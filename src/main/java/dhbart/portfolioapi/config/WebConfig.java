@@ -20,5 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(allowedOrigin)
                 .allowedMethods("GET", "OPTIONS")
                 .allowedHeaders("*");
+        registry.addMapping("/icons/**")
+                .allowedOrigins(allowedOrigin)
+                .allowedMethods("GET", "OPTIONS")
+                .allowedHeaders("*");
     }
 }

@@ -19,7 +19,6 @@ public class Technology {
 
     private String name;
     private String slug;
-    private String icon;
     private String website;
 
     @NotNull

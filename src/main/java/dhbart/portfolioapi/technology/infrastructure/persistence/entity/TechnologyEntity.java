@@ -21,9 +21,6 @@ public class TechnologyEntity {
     @Column(nullable = false, unique = true)
     private String slug;
 
-    @Column(length = 100)
-    private String icon;
-
     @Column(length = 2048)
     private String website;
 
@@ -39,12 +36,11 @@ public class TechnologyEntity {
     protected TechnologyEntity() {
     }
 
-    public TechnologyEntity(Long id, String name, String slug, String icon, String website,
+    public TechnologyEntity(Long id, String name, String slug, String website,
                             Integer displayOrder, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.name = name;
         this.slug = slug;
-        this.icon = icon;
         this.website = website;
         this.displayOrder = displayOrder;
         this.createdAt = createdAt;
@@ -66,7 +62,6 @@ public class TechnologyEntity {
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getSlug() { return slug; }
-    public String getIcon() { return icon; }
     public String getWebsite() { return website; }
     public Integer getDisplayOrder() { return displayOrder; }
 }
