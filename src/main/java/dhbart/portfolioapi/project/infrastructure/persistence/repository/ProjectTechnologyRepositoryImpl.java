@@ -22,7 +22,17 @@ public class ProjectTechnologyRepositoryImpl implements ProjectTechnologyReposit
 
     @Override
     public List<ProjectTechnology> findAllByProjectIdOrderByDisplayOrderAsc(Long projectId) {
-        return repository.findAllByProject_IdOrderByDisplayOrderAsc(projectId).stream()
+        return repository.findAllByProjectId(projectId).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<ProjectTechnology> findAllByProjectIdInOrderByProjectIdAscDisplayOrderAsc(List<Long> projectIds) {
+        if (projectIds.isEmpty()) {
+            return List.of();
+        }
+        return repository.findAllByProjectIds(projectIds).stream()
                 .map(mapper::toDomain)
                 .toList();
     }

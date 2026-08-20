@@ -3,10 +3,9 @@ package dhbart.portfolioapi.about.application.service;
 import dhbart.portfolioapi.about.application.dto.AboutResponse;
 import dhbart.portfolioapi.about.application.mapper.AboutMapper;
 import dhbart.portfolioapi.about.domain.repository.AboutRepository;
-import org.springframework.http.HttpStatus;
+import dhbart.portfolioapi.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,7 +24,6 @@ public class AboutService {
     public AboutResponse findAbout() {
         return aboutRepository.findById(ABOUT_ID)
                 .map(aboutMapper::toResponse)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "About content not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("About content not found"));
     }
 }

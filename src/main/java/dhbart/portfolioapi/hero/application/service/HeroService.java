@@ -3,10 +3,9 @@ package dhbart.portfolioapi.hero.application.service;
 import dhbart.portfolioapi.hero.application.dto.HeroResponse;
 import dhbart.portfolioapi.hero.application.mapper.HeroMapper;
 import dhbart.portfolioapi.hero.domain.repository.HeroRepository;
-import org.springframework.http.HttpStatus;
+import dhbart.portfolioapi.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,7 +24,6 @@ public class HeroService {
     public HeroResponse findHero() {
         return heroRepository.findById(HERO_ID)
                 .map(heroMapper::toResponse)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Hero content not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Hero content not found"));
     }
 }

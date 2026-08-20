@@ -6,11 +6,11 @@ import dhbart.portfolioapi.project.domain.model.Project;
 import dhbart.portfolioapi.project.domain.repository.ProjectRepository;
 import dhbart.portfolioapi.project.domain.repository.ProjectTechnologyRepository;
 import dhbart.portfolioapi.technology.application.mapper.TechnologyMapper;
+import dhbart.portfolioapi.exception.ResourceNotFoundException;
 import java.util.List;
-import org.springframework.http.HttpStatus;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,17 +32,26 @@ public class ProjectService {
     }
 
     public List<ProjectResponse> findAllProjects() {
-        return projectRepository.findAllByOrderByDisplayOrderAsc()
+        var projects = projectRepository.findAllByOrderByDisplayOrderAsc();
+        var technologiesByProjectId = projectTechnologyRepository
+                .findAllByProjectIdInOrderByProjectIdAscDisplayOrderAsc(
+                        projects.stream().map(Project::getId).toList())
                 .stream()
-                .map(this::toResponse)
+                .collect(Collectors.groupingBy(
+                        projectTechnology -> projectTechnology.getProject().getId(),
+                        Collectors.mapping(projectTechnology -> technologyMapper.toResponse(
+                                projectTechnology.getTechnology()), Collectors.toList())));
+
+        return projects.stream()
+                .map(project -> projectMapper.toResponse(
+                        project, technologiesByProjectId.getOrDefault(project.getId(), List.of())))
                 .toList();
     }
 
     public ProjectResponse findProject(String slug) {
         return projectRepository.findBySlug(slug)
                 .map(this::toResponse)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
     }
 
     private ProjectResponse toResponse(Project project) {

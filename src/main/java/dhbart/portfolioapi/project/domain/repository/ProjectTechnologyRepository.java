@@ -6,4 +6,6 @@ import java.util.List;
 public interface ProjectTechnologyRepository {
 
     List<ProjectTechnology> findAllByProjectIdOrderByDisplayOrderAsc(Long projectId);
+
+    List<ProjectTechnology> findAllByProjectIdInOrderByProjectIdAscDisplayOrderAsc(List<Long> projectIds);
 }
