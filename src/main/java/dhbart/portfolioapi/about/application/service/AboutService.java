@@ -16,7 +16,11 @@ public class AboutService {
     private final AboutMapper aboutMapper;
     private final LocaleResolver localeResolver;
 
-    public AboutService(AboutRepository aboutRepository, AboutMapper aboutMapper, LocaleResolver localeResolver) {
+    public AboutService(
+            AboutRepository aboutRepository,
+            AboutMapper aboutMapper,
+            LocaleResolver localeResolver
+    ) {
         this.aboutRepository = aboutRepository;
         this.aboutMapper = aboutMapper;
         this.localeResolver = localeResolver;
@@ -25,8 +29,12 @@ public class AboutService {
     public AboutResponse findAbout(String acceptLanguage) {
         for (String locale : localeResolver.resolve(acceptLanguage)) {
             var about = aboutRepository.findByLocale(locale);
-            if (about.isPresent()) return aboutMapper.toResponse(about.get());
+
+            if (about.isPresent()) {
+                return aboutMapper.toResponse(about.get());
+            }
         }
+
         throw new ResourceNotFoundException("About content not found");
     }
 }

@@ -19,28 +19,22 @@ public class HeroService {
     private final HeroMapper heroMapper;
     private final LocaleResolver localeResolver;
 
-    @Autowired
-    public HeroService(HeroRepository heroRepository, HeroMapper heroMapper, LocaleResolver localeResolver) {
+    public HeroService( HeroRepository heroRepository, HeroMapper heroMapper, LocaleResolver localeResolver
+    ) {
         this.heroRepository = heroRepository;
         this.heroMapper = heroMapper;
         this.localeResolver = localeResolver;
     }
 
-    public HeroService(HeroRepository heroRepository, HeroMapper heroMapper) {
-        this(heroRepository, heroMapper, new LocaleResolver());
-    }
-
-    public HeroResponse findHero() {
-        return heroRepository.findById(HERO_ID)
-                .map(heroMapper::toResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("Hero content not found"));
-    }
-
     public HeroResponse findHero(String acceptLanguage) {
         for (String locale : localeResolver.resolve(acceptLanguage)) {
             var hero = heroRepository.findByLocale(locale);
-            if (hero.isPresent()) return heroMapper.toResponse(hero.get());
+
+            if (hero.isPresent()) {
+                return heroMapper.toResponse(hero.get());
+            }
         }
+
         throw new ResourceNotFoundException("Hero content not found");
     }
 }

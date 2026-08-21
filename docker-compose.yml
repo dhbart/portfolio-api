@@ -17,5 +17,23 @@ services:
       timeout: 5s
       retries: 10
 
+
+  portfolio-api:
+
+    build: .
+
+    container_name: portfolio-api
+
+    depends_on:
+      - postgres
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/portfolio
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-portfolio}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-portfolio}
+
+    ports:
+      - "8080:8080"
+
 volumes:
   portfolio-postgres-data:

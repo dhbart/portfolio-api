@@ -3,8 +3,11 @@ package dhbart.portfolioapi.certification.application.service;
 import dhbart.portfolioapi.certification.application.dto.CertificationResponse;
 import dhbart.portfolioapi.certification.application.mapper.CertificationMapper;
 import dhbart.portfolioapi.certification.domain.repository.CertificationRepository;
+import dhbart.portfolioapi.exception.ResourceNotFoundException;
 import dhbart.portfolioapi.localization.application.service.LocaleResolver;
 import java.util.List;
+
+import dhbart.portfolioapi.project.application.dto.ProjectResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,4 +35,14 @@ public class CertificationService {
         }
         return List.of();
     }
+
+    public CertificationResponse findCertification(Long id, String acceptLanguage){
+        for (String locale : localeResolver.resolve(acceptLanguage)) {
+            var certification = certificationRepository.findByIdAndLocale(id, locale);
+            if (certification.isPresent()) return certificationMapper.toResponse(certification.get());
+        }
+        throw new ResourceNotFoundException("Certification not found");
+    }
+
+
 }

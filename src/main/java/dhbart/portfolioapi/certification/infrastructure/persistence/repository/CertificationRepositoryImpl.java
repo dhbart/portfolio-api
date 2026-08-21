@@ -4,6 +4,9 @@ import dhbart.portfolioapi.certification.domain.model.Certification;
 import dhbart.portfolioapi.certification.domain.repository.CertificationRepository;
 import dhbart.portfolioapi.certification.infrastructure.persistence.mapper.CertificationEntityMapper;
 import java.util.List;
+import java.util.Optional;
+
+import dhbart.portfolioapi.project.domain.model.Project;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -24,5 +27,10 @@ public class CertificationRepositoryImpl implements CertificationRepository {
         return repository.findAllByLocaleOrderByDisplayOrderAsc(locale).stream()
                 .map(mapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Optional<Certification> findByIdAndLocale(Long id, String locale) {
+        return repository.findByIdAndLocale(id, locale).map(mapper::toDomain);
     }
 }
