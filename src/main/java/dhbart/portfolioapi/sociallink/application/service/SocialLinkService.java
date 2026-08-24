@@ -3,7 +3,9 @@ package dhbart.portfolioapi.sociallink.application.service;
 import dhbart.portfolioapi.sociallink.application.dto.SocialLinkResponse;
 import dhbart.portfolioapi.sociallink.application.mapper.SocialLinkMapper;
 import dhbart.portfolioapi.sociallink.domain.repository.SocialLinkRepository;
+import dhbart.portfolioapi.config.CacheNames;
 import java.util.List;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ public class SocialLinkService {
         this.socialLinkMapper = socialLinkMapper;
     }
 
+    @Cacheable(cacheNames = CacheNames.SOCIAL_LINKS)
     public List<SocialLinkResponse> findAllSocialLinks() {
         return socialLinkRepository.findAllByOrderByDisplayOrderAsc()
                 .stream()

@@ -4,7 +4,9 @@ import dhbart.portfolioapi.experience.application.dto.ExperienceResponse;
 import dhbart.portfolioapi.experience.application.mapper.ExperienceMapper;
 import dhbart.portfolioapi.experience.domain.repository.ExperienceRepository;
 import dhbart.portfolioapi.localization.application.service.LocaleResolver;
+import dhbart.portfolioapi.config.CacheNames;
 import java.util.List;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,7 @@ public class ExperienceService {
         this.localeResolver = localeResolver;
     }
 
+    @Cacheable(cacheNames = CacheNames.EXPERIENCE, key = "#acceptLanguage")
     public List<ExperienceResponse> findAllExperiences(String acceptLanguage) {
         for (String locale : localeResolver.resolve(acceptLanguage)) {
             var experiences = experienceRepository.findAllByLocaleOrderByDisplayOrderDesc(locale);

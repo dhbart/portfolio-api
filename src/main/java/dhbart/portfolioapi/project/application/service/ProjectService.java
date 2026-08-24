@@ -8,7 +8,9 @@ import dhbart.portfolioapi.project.domain.repository.ProjectTechnologyRepository
 import dhbart.portfolioapi.technology.application.mapper.TechnologyMapper;
 import dhbart.portfolioapi.exception.ResourceNotFoundException;
 import dhbart.portfolioapi.localization.application.service.LocaleResolver;
+import dhbart.portfolioapi.config.CacheNames;
 import java.util.List;
+import org.springframework.cache.annotation.Cacheable;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,7 @@ public class ProjectService {
         this.localeResolver = localeResolver;
     }
 
+    @Cacheable(cacheNames = CacheNames.PROJECTS, key = "#acceptLanguage")
     public List<ProjectResponse> findAllProjects(String acceptLanguage) {
         var projects = localizedProjects(acceptLanguage);
         var technologiesByProjectId = projectTechnologyRepository
@@ -52,6 +55,7 @@ public class ProjectService {
                 .toList();
     }
 
+    @Cacheable(cacheNames = CacheNames.PROJECT_DETAILS, key = "{#slug, #acceptLanguage}")
     public ProjectResponse findProject(String slug, String acceptLanguage) {
         for (String locale : localeResolver.resolve(acceptLanguage)) {
             var project = projectRepository.findBySlugAndLocale(slug, locale);

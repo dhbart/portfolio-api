@@ -3,7 +3,9 @@ package dhbart.portfolioapi.technology.application.service;
 import dhbart.portfolioapi.technology.application.dto.TechnologyResponse;
 import dhbart.portfolioapi.technology.application.mapper.TechnologyMapper;
 import dhbart.portfolioapi.technology.domain.repository.TechnologyRepository;
+import dhbart.portfolioapi.config.CacheNames;
 import java.util.List;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ public class TechnologyService {
         this.technologyMapper = technologyMapper;
     }
 
+    @Cacheable(cacheNames = CacheNames.TECHNOLOGIES)
     public List<TechnologyResponse> findAllTechnologies() {
         return technologyRepository.findAllByOrderByDisplayOrderAsc()
                 .stream()

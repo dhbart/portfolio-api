@@ -173,6 +173,12 @@ Todos os endpoints REST de leitura aparecem na especificação OpenAPI.
 - [ ] Adicionar autenticação JWT quando operações administrativas forem criadas;
 - [ ] Preparar o deploy.
 
+## Cache de leitura
+
+A API utiliza Spring Cache com Caffeine para os modelos de leitura do portfólio. A política centralizada expira entradas após 10 minutos e limita cada cache a 256 entradas. Operações que dependem de idioma usam `Accept-Language` na chave; detalhes também incluem o identificador do recurso.
+
+Actuator, health checks, recursos estáticos e futuros endpoints administrativos não são cacheados. Como a API atual é somente leitura, a expiração por tempo é suficiente. Quando o módulo administrativo existir, seus serviços deverão invalidar as listas e detalhes afetados após cada escrita bem-sucedida. Veja a decisão completa em [`docs/architecture/caching.md`](docs/architecture/caching.md).
+
 ## Projeto relacionado
 
 Frontend Angular do portfólio:

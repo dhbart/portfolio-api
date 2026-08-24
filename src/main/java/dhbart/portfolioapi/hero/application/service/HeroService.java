@@ -5,6 +5,8 @@ import dhbart.portfolioapi.hero.application.mapper.HeroMapper;
 import dhbart.portfolioapi.hero.domain.repository.HeroRepository;
 import dhbart.portfolioapi.exception.ResourceNotFoundException;
 import dhbart.portfolioapi.localization.application.service.LocaleResolver;
+import dhbart.portfolioapi.config.CacheNames;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ public class HeroService {
         this.localeResolver = localeResolver;
     }
 
+    @Cacheable(cacheNames = CacheNames.HERO, key = "#acceptLanguage")
     public HeroResponse findHero(String acceptLanguage) {
         for (String locale : localeResolver.resolve(acceptLanguage)) {
             var hero = heroRepository.findByLocale(locale);
