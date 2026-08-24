@@ -1,190 +1,268 @@
 # Portfolio API
 
-Backend da plataforma de portfólio pessoal **dhbart**.
+[![Java](https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.7-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Flyway](https://img.shields.io/badge/Flyway-migrations-CC0200?logo=flyway&logoColor=white)](https://documentation.red-gate.com/flyway)
+[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![OpenAPI](https://img.shields.io/badge/OpenAPI-documented-6BA539?logo=swagger&logoColor=white)](https://swagger.io/specification/)
 
-Este projeto faz parte da evolução do portfólio para uma aplicação full stack, substituindo os dados estáticos do frontend por uma API REST conectada a um banco de dados.
+> **Status: Active Development**  
+> Public read-only REST API powering Daniel Bartholdy’s portfolio. The application is deployed on Render, uses Supabase PostgreSQL, manages its schema with Flyway, and provides localized content to an Angular frontend.
 
-> **Status:** em desenvolvimento — fase de fundação do projeto.
+## About
 
-## Objetivo
+Portfolio API replaces hard-coded frontend content with a centralized, localized REST API. It exposes the professional information used by the public portfolio—hero content, profile, experience, projects, technologies, certifications, social links, and public icons—from PostgreSQL.
 
-Disponibilizar uma API para gerenciar e expor as informações profissionais do portfólio, incluindo:
+The backend follows production-minded practices: feature-first organization, HTTP DTOs separated from persistence entities, a dedicated service layer, Flyway migrations, container support, OpenAPI documentation, and integration testing with Testcontainers.
 
-- apresentação pessoal;
-- experiência profissional;
-- projetos;
-- tecnologias;
-- certificações;
-- links de redes sociais.
+## Features
 
-## Tecnologias
+- Public, read-only REST API
+- Localized content in **Portuguese (`pt-BR`)**, **English (`en-US`)**, and **Spanish (`es-ES`)**
+- Standard language negotiation through `Accept-Language`
+- Feature-first architecture with application, domain, and infrastructure boundaries
+- PostgreSQL persistence with Flyway-managed migrations
+- Spring Security foundation for a public API
+- CORS restricted to the configured Angular frontend origin
+- Global exception handling and Bean Validation
+- OpenAPI specification and Swagger UI
+- Docker and Docker Compose support
+- Integration tests using Testcontainers and PostgreSQL
 
-- Java 25
-- Spring Boot 4.0.7
-- Gradle 9.7.0
-- Spring Web MVC
-- Spring Data JPA
-- Spring Security
-- Bean Validation
-- PostgreSQL
-- Flyway
-- Springdoc OpenAPI
-- Lombok
-- JUnit
-- Testcontainers
-
-## Arquitetura atual
-
-O backend usa arquitetura feature-first. Cada domínio possui `application`, `domain` e `infrastructure`, mantendo o fluxo:
+## Architecture
 
 ```text
-Controller
-    ↓
-Service
-    ↓
-Repository
-    ↓
-PostgreSQL
+HTTP request
+    │
+    ▼
+Spring Security ───────────────► CORS and public read-only policy
+    │
+    ▼
+REST Controller ───────────────► Request/response DTOs
+    │
+    ▼
+Service layer ─────────────────► Use cases and business rules
+    │
+    ▼
+Repository layer
+    │
+    ▼
+PostgreSQL ◄─────────────────── Flyway versioned migrations
 ```
 
-Os contratos da API são definidos por DTOs, mantendo as entidades de persistência separadas da camada HTTP.
+### Internationalization flow
 
-## Estrutura do projeto
+```text
+Accept-Language: en-US,en;q=0.9
+                │
+                ▼
+          Locale resolution
+                │
+                ▼
+      Locale-aware service query
+                │
+                ▼
+          Localized JSON response
+```
+
+If the request does not provide a supported locale, the application uses its configured default.
+
+## Project structure
+
+The project is organized by feature. Each domain keeps its application, domain, and infrastructure responsibilities close together; cross-cutting concerns stay in shared packages.
 
 ```text
 src/
 ├── main/
 │   ├── java/dhbart/portfolioapi/
+│   │   ├── config/                 # web, CORS, OpenAPI, security configuration
+│   │   ├── common/                 # shared abstractions
+│   │   ├── exception/              # global API exception handling
+│   │   ├── hero/
+│   │   ├── about/
+│   │   ├── experience/
+│   │   ├── projects/
+│   │   ├── technologies/
+│   │   ├── certifications/
+│   │   ├── sociallinks/
+│   │   └── support/icons/
 │   └── resources/
+│       ├── db/migration/           # Flyway migrations
+│       ├── static/                 # public static assets
+│       └── application.yml
 └── test/
     └── java/dhbart/portfolioapi/
 ```
 
-Cada feature é organizada da seguinte forma:
+Within a feature, code is separated into `application`, `domain`, and `infrastructure` layers. HTTP contracts use DTOs, preserving the separation between API and persistence models.
 
-```text
-config/
-controller/
-dto/
-entity/
-exception/
-mapper/
-repository/
-service/
+## API endpoints
+
+All portfolio endpoints are read-only and support the `Accept-Language` header.
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/hero` | Introductory portfolio content |
+| `GET` | `/api/v1/about` | Professional profile information |
+| `GET` | `/api/v1/experience` | Professional experience |
+| `GET` | `/api/v1/projects` | Project list |
+| `GET` | `/api/v1/projects/{slug}` | Project details |
+| `GET` | `/api/v1/technologies` | Technologies and skills |
+| `GET` | `/api/v1/certifications` | Certification list |
+| `GET` | `/api/v1/certifications/{slug}` | Certification details |
+| `GET` | `/api/v1/social-links` | Social and contact links |
+| `GET` | `/icons/**` | Public icon assets |
+
+Example request:
+
+```bash
+curl -H "Accept-Language: en-US" http://localhost:8080/api/v1/projects
 ```
 
-## Pré-requisitos
+## API documentation
 
-- JDK 25;
-- Docker, para execução dos serviços de infraestrutura e dos testes de integração;
-- acesso ao PostgreSQL quando a persistência for habilitada.
-
-O projeto inclui o Gradle Wrapper, portanto não é necessário instalar o Gradle globalmente.
-
-## Configuração de ambiente
-
-A aplicação utiliza variáveis de ambiente para acessar o PostgreSQL. Nenhuma credencial deve ser versionada.
-
-Variáveis obrigatórias:
+Swagger UI provides the authoritative list of operations, parameters, response schemas, and examples:
 
 ```text
-DB_URL=jdbc:postgresql://localhost:5432/portfolio
-DB_USERNAME=portfolio
-DB_PASSWORD=change-me
+http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/v3/api-docs
 ```
 
-Opcionalmente, configure `FRONTEND_ORIGIN` para alterar a origem permitida pelo CORS. O padrão é `http://localhost:4200`.
+## Security
 
-## Executando o projeto
+The current API is deliberately **public and read-only**. Only `GET` and `OPTIONS` are allowed for the public API and icon resources. CORS is constrained to `FRONTEND_ORIGIN`; authentication is not required for consuming portfolio content.
 
-No Windows:
+JWT authentication and role-based authorization are planned for a future administrative API, when content-management operations (`POST`, `PUT`, `PATCH`, and `DELETE`) are introduced.
+
+## Prerequisites
+
+- JDK 25
+- Docker, for local PostgreSQL and Testcontainers-backed integration tests
+- PostgreSQL, locally or through a Supabase project
+
+The repository includes the Gradle Wrapper, so a global Gradle installation is unnecessary.
+
+## Configuration
+
+The datasource is assembled from the following environment variables. Keep credentials out of source control.
+
+| Variable | Description | Local example |
+| --- | --- | --- |
+| `PGHOST` | PostgreSQL host | `localhost` |
+| `PGPORT` | PostgreSQL port | `5432` |
+| `PGDATABASE` | Database name | `portfolio` |
+| `PGUSER` | Database user | `portfolio` |
+| `PGPASSWORD` | Database password | `change-me` |
+| `FRONTEND_ORIGIN` | Allowed Angular frontend origin | `http://localhost:4200` |
+| `SPRING_PROFILES_ACTIVE` | Active Spring profile | `local` |
+
+`SHOW_SQL` is also supported for development diagnostics and defaults to `false`.
+
+For Supabase through the Session Pooler, copy the host, port, database, and user exactly as supplied by Supabase. The pooler username may include the project reference (for example, `postgres.<project-ref>`).
+
+## Run locally
+
+Start PostgreSQL with Docker Compose:
+
+```bash
+docker compose up -d postgres
+```
+
+Set the database variables, then run the application.
 
 ```powershell
-$env:DB_URL="jdbc:postgresql://localhost:5432/portfolio"
-$env:DB_USERNAME="portfolio"
-$env:DB_PASSWORD="change-me"
-.\gradlew.bat bootRun --args='--spring.profiles.active=local'
+$env:PGHOST="localhost"
+$env:PGPORT="5432"
+$env:PGDATABASE="portfolio"
+$env:PGUSER="portfolio"
+$env:PGPASSWORD="change-me"
+$env:FRONTEND_ORIGIN="http://localhost:4200"
+$env:SPRING_PROFILES_ACTIVE="local"
+.\gradlew.bat bootRun
 ```
 
-Em sistemas Unix-like:
+On Unix-like systems:
 
 ```bash
 ./gradlew bootRun
 ```
 
-Ao iniciar, o Flyway valida o schema PostgreSQL e os endpoints públicos ficam disponíveis sem autenticação.
+Flyway validates and applies pending migrations at startup. The health endpoint is available at `http://localhost:8080/actuator/health`.
 
-O health check está disponível em `http://localhost:8080/actuator/health`.
+## Docker
 
-## Troubleshooting PostgreSQL/Flyway
+The project includes Docker and Docker Compose support for a repeatable environment.
 
-If Flyway fails during startup, confirm that `org.flywaydb:flyway-database-postgresql` is declared and that the datasource URL uses `jdbc:postgresql://...`, not `postgresql://...`. When Flyway owns the schema, keep `spring.jpa.hibernate.ddl-auto=validate`.
-
-## Executando os testes
-
-Para iniciar o PostgreSQL localmente:
-
-```powershell
-docker compose up -d postgres
+```bash
+docker compose up --build
 ```
 
-Depois, configure `DB_URL`, `DB_USERNAME` e `DB_PASSWORD` e execute a aplicação. O Flyway executará as migrations automaticamente.
+To start only the database infrastructure, use `docker compose up -d postgres` and run the Spring Boot application via Gradle as shown above.
 
-Os testes de integração utilizam Testcontainers e iniciam seu próprio PostgreSQL 18.4. Eles não dependem de um Compose em execução.
+## Deployment
 
-No Windows:
+The production architecture is:
 
-```powershell
-.\gradlew.bat test
+```text
+Angular frontend (Vercel)
+          │
+          ▼
+Portfolio API (Render)
+          │
+          ▼
+Supabase PostgreSQL
 ```
 
-Em sistemas Unix-like:
+Configure `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `FRONTEND_ORIGIN`, and `SPRING_PROFILES_ACTIVE` in Render’s environment settings. Flyway runs automatically during application startup.
+
+Keep all Supabase credentials in Render’s encrypted environment variables. For Render environments that require IPv4 connectivity, use Supabase’s Session Pooler connection details instead of an IPv6-only direct connection.
+
+## Testing
+
+Run the test suite with:
 
 ```bash
 ./gradlew test
 ```
 
-Os testes de integração utilizarão Testcontainers para executar dependências reais de infraestrutura de forma isolada.
+On Windows:
 
-## Documentação da API
+```powershell
+.\gradlew.bat test
+```
 
-Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+Integration tests use Testcontainers to provision an isolated PostgreSQL instance, so they do not depend on a running Compose database. Docker must be available for these tests.
 
-OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+## Troubleshooting Flyway
 
-Todos os endpoints REST de leitura aparecem na especificação OpenAPI.
+If Flyway fails at startup, confirm that the PostgreSQL Flyway database module is present and that the datasource uses a JDBC URL (`jdbc:postgresql://...`), not a plain PostgreSQL URI. Because Flyway owns the schema, Hibernate is configured to validate it rather than generate it.
 
 ## Roadmap
 
-- [x] Criar o projeto Spring Boot;
-- [x] Configurar Java 25 e Gradle 9.7.0;
-- [x] Adicionar as dependências principais;
-- [x] Criar a documentação de arquitetura;
-- [x] Configurar PostgreSQL;
-- [x] Configurar migrations com Flyway;
-- [x] Implementar o domínio `Hero`;
-- [x] Criar o endpoint `GET /api/v1/hero`;
-- [x] Implementar os domínios de leitura do portfólio;
-- [x] Padronizar tratamento global de exceções;
-- [x] Eliminar N+1 na listagem de Projects;
-- [x] Preparar a infraestrutura de segurança pública;
-- [x] Verificar a documentação OpenAPI;
-- [ ] Integrar o frontend Angular;
-- [ ] Adicionar autenticação JWT quando operações administrativas forem criadas;
-- [ ] Preparar o deploy.
+- [x] Spring Boot 4, Java 25, Gradle, PostgreSQL, and Flyway foundation
+- [x] Public read-only API for portfolio content
+- [x] Feature-first backend architecture and global exception handling
+- [x] Portuguese, English, and Spanish localized data
+- [x] Angular frontend integration
+- [x] Docker, Render deployment, and Supabase PostgreSQL
+- [x] Swagger/OpenAPI and public health check
+- [ ] Complete security hardening: security configuration, headers, and production profiles
+- [ ] Cache public resources
+- [ ] Rate limiting for the public API
+- [ ] Expand unit and integration test coverage
+- [ ] CI/CD with GitHub Actions
+- [ ] Observability: Actuator metrics and structured logs
+- [ ] JWT-protected administrative API and Angular administration panel
 
-## Cache de leitura
+## Why this project?
 
-A API utiliza Spring Cache com Caffeine para os modelos de leitura do portfólio. A política centralizada expira entradas após 10 minutos e limita cada cache a 256 entradas. Operações que dependem de idioma usam `Accept-Language` na chave; detalhes também incluem o identificador do recurso.
+This is more than a static personal site: it is a real, deployed full-stack system. It demonstrates how a focused public API can be designed with localization, persistence, schema migrations, documentation, cloud deployment, and a clear path toward authenticated administration—without adding premature complexity to a read-only product.
 
-Actuator, health checks, recursos estáticos e futuros endpoints administrativos não são cacheados. Como a API atual é somente leitura, a expiração por tempo é suficiente. Quando o módulo administrativo existir, seus serviços deverão invalidar as listas e detalhes afetados após cada escrita bem-sucedida. Veja a decisão completa em [`docs/architecture/caching.md`](docs/architecture/caching.md).
+## Related project
 
-## Projeto relacionado
+Angular frontend: [dhbart/bartholdy-portfolio](https://github.com/dhbart/bartholdy-portfolio)
 
-Frontend Angular do portfólio:
+## License
 
-<https://github.com/dhbart/bartholdy-portfolio>
-
-## Licença
-
-Este projeto é de uso pessoal e está em desenvolvimento.
+This repository is for personal use and is under active development. No open-source license has been declared.
