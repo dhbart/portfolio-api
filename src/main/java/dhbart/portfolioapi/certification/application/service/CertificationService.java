@@ -28,7 +28,7 @@ public class CertificationService {
         this.localeResolver = localeResolver;
     }
 
-    @Cacheable(cacheNames = CacheNames.CERTIFICATIONS, key = "#acceptLanguage")
+    @Cacheable(cacheNames = CacheNames.CERTIFICATIONS, key = "#acceptLanguage ?: ''")
     public List<CertificationResponse> findAllCertifications(String acceptLanguage) {
         for (String locale : localeResolver.resolve(acceptLanguage)) {
             var certifications = certificationRepository.findAllByLocaleOrderByDisplayOrderAsc(locale);
@@ -39,7 +39,7 @@ public class CertificationService {
         return List.of();
     }
 
-    @Cacheable(cacheNames = CacheNames.CERTIFICATION_DETAILS, key = "{#id, #acceptLanguage}")
+    @Cacheable(cacheNames = CacheNames.CERTIFICATION_DETAILS, key = "{#id, #acceptLanguage ?: ''}")
     public CertificationResponse findCertification(Long id, String acceptLanguage){
         for (String locale : localeResolver.resolve(acceptLanguage)) {
             var certification = certificationRepository.findByIdAndLocale(id, locale);

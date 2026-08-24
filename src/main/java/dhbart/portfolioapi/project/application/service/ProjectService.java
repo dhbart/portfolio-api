@@ -37,7 +37,7 @@ public class ProjectService {
         this.localeResolver = localeResolver;
     }
 
-    @Cacheable(cacheNames = CacheNames.PROJECTS, key = "#acceptLanguage")
+    @Cacheable(cacheNames = CacheNames.PROJECTS, key = "#acceptLanguage ?: ''")
     public List<ProjectResponse> findAllProjects(String acceptLanguage) {
         var projects = localizedProjects(acceptLanguage);
         var technologiesByProjectId = projectTechnologyRepository
@@ -55,7 +55,7 @@ public class ProjectService {
                 .toList();
     }
 
-    @Cacheable(cacheNames = CacheNames.PROJECT_DETAILS, key = "{#slug, #acceptLanguage}")
+    @Cacheable(cacheNames = CacheNames.PROJECT_DETAILS, key = "{#slug, #acceptLanguage ?: ''}")
     public ProjectResponse findProject(String slug, String acceptLanguage) {
         for (String locale : localeResolver.resolve(acceptLanguage)) {
             var project = projectRepository.findBySlugAndLocale(slug, locale);

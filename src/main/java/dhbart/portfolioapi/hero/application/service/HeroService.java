@@ -15,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class HeroService {
 
-    private static final long HERO_ID = 1L;
-
     private final HeroRepository heroRepository;
     private final HeroMapper heroMapper;
     private final LocaleResolver localeResolver;
@@ -28,7 +26,7 @@ public class HeroService {
         this.localeResolver = localeResolver;
     }
 
-    @Cacheable(cacheNames = CacheNames.HERO, key = "#acceptLanguage")
+    @Cacheable(cacheNames = CacheNames.HERO, key = "#acceptLanguage ?: ''")
     public HeroResponse findHero(String acceptLanguage) {
         for (String locale : localeResolver.resolve(acceptLanguage)) {
             var hero = heroRepository.findByLocale(locale);

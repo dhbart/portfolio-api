@@ -25,7 +25,7 @@ public class ExperienceService {
         this.localeResolver = localeResolver;
     }
 
-    @Cacheable(cacheNames = CacheNames.EXPERIENCE, key = "#acceptLanguage")
+    @Cacheable(cacheNames = CacheNames.EXPERIENCE, key = "#acceptLanguage ?: ''")
     public List<ExperienceResponse> findAllExperiences(String acceptLanguage) {
         for (String locale : localeResolver.resolve(acceptLanguage)) {
             var experiences = experienceRepository.findAllByLocaleOrderByDisplayOrderDesc(locale);

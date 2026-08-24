@@ -28,7 +28,7 @@ public class AboutService {
         this.localeResolver = localeResolver;
     }
 
-    @Cacheable(cacheNames = CacheNames.ABOUT, key = "#acceptLanguage")
+    @Cacheable(cacheNames = CacheNames.ABOUT, key = "#acceptLanguage ?: ''")
     public AboutResponse findAbout(String acceptLanguage) {
         for (String locale : localeResolver.resolve(acceptLanguage)) {
             var about = aboutRepository.findByLocale(locale);

@@ -234,6 +234,14 @@ On Windows:
 
 Integration tests use Testcontainers to provision an isolated PostgreSQL instance, so they do not depend on a running Compose database. Docker must be available for these tests.
 
+The suite follows the testing pyramid and is organized by responsibility:
+
+- unit tests cover service rules, localization fallback, exception behavior, and non-trivial orchestration with mocked external collaborators;
+- repository integration tests use a real PostgreSQL Testcontainer and the production Flyway migrations to verify queries, ordering, locale predicates, slugs, relationships, and seed integrity;
+- controller integration tests use `@SpringBootTest` and MockMvc against the same real application stack to verify JSON contracts, HTTP errors, content negotiation, CORS/OPTIONS, public security rules, health, localization, and cache-backed repeated reads.
+
+Repositories, entities, DTOs, generated Lombok methods, and generated mapper code are intentionally not unit-tested. Confidence comes from exercising critical behavior at the narrowest realistic level, not from maximizing a coverage percentage. No tests are ignored and no H2 database is used.
+
 ## Troubleshooting Flyway
 
 If Flyway fails at startup, confirm that the PostgreSQL Flyway database module is present and that the datasource uses a JDBC URL (`jdbc:postgresql://...`), not a plain PostgreSQL URI. Because Flyway owns the schema, Hibernate is configured to validate it rather than generate it.
