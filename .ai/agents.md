@@ -50,6 +50,8 @@ Each business feature is isolated under `{feature}` with `application`, `domain`
 - `Hero`: read-only portfolio hero content with PostgreSQL persistence.
 - `About`: read-only portfolio introduction with PostgreSQL persistence.
 - `Project`: read-only project listing and slug lookup with PostgreSQL persistence and initial data from the frontend project catalogue.
+- `Technology`: independent read-only technology catalogue reused through explicit context relationships.
+- `Certification`: read-only educational and professional achievement listing with PostgreSQL persistence and type-based grouping.
 
 The Project feature is implemented under `project/application`, `project/domain`, and `project/infrastructure/persistence`. Its public endpoints are:
 
@@ -76,8 +78,8 @@ The collection endpoint orders projects by `displayOrder`. The Project migration
 - `GET /api/projects`
 - `GET /api/projects/{slug}`
 - `GET /api/experience`
-- `GET /api/certifications`
-- `GET /api/social-links`
+- `GET /api/v1/certifications`
+- `GET /api/v1/social-links`
 
 ## Qualidade
 
