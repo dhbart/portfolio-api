@@ -48,3 +48,8 @@ portfolio:
     temperature: ${PORTFOLIO_AI_TEMPERATURE:0.2}
     max-tokens: ${PORTFOLIO_AI_MAX_TOKENS:512}
     system-prompt: prompts/system.md
+  retrieval:
+    enabled: ${PORTFOLIO_RETRIEVAL_ENABLED:false}
+    vector-store: ${PORTFOLIO_RETRIEVAL_VECTOR_STORE:supabase-pgvector}
+    default-top-k: ${PORTFOLIO_RETRIEVAL_DEFAULT_TOP_K:5}
+    minimum-score: ${PORTFOLIO_RETRIEVAL_MINIMUM_SCORE:0.7}

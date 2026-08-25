@@ -463,15 +463,21 @@ V3 is knowledge-first: the knowledge base is the source of truth and the LLM onl
 - [x] Documentation of local ingestion and production boundaries.
 - [x] No embeddings, pgvector, RAG, PDF ingestion, or document processing.
 
-### V3.2 — Knowledge Pipeline — planned
+### V3.2 — Retrieval Foundation — completed
 
-- [ ] Local n8n ingestion, chunking, embeddings, and Supabase pgvector storage.
-- [ ] Keep n8n and document processing out of the production runtime.
+- [x] Define the persistence-agnostic `KnowledgeChunk` model.
+- [x] Define the store-independent `KnowledgeRepository` contract.
+- [x] Extend `RetrievalService` as the future retrieval boundary without implementing retrieval.
+- [x] Add typed retrieval configuration for enablement, vector-store name, default top-k, and minimum score.
+- [x] Document the external n8n → chunking → embeddings → Supabase pgvector lifecycle.
+- [x] Keep document processing, embeddings, vector search, and pgvector queries out of production.
 
-### V3.3 — Retrieval (RAG) — planned
+### V3.3 — Vector Search (pgvector) — planned
 
-- [ ] Implement vector retrieval behind `RetrievalService`.
+- [ ] Implement a pgvector-backed `KnowledgeRepository` adapter.
+- [ ] Implement similarity retrieval behind `RetrievalService`.
 - [ ] Add bounded context assembly and grounding tests.
+- [ ] Keep ingestion and embedding generation outside the production runtime.
 
 ### V3.4 — Frontend Chat — planned
 

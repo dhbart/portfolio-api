@@ -867,3 +867,28 @@ The backend communicates directly with OpenAI through Spring AI. Retrieval is is
 ### Consequences
 
 Future RAG must enter through `RetrievalService`; chat generation must not issue ad-hoc vector queries. Provider abstractions remain deferred until a second production provider is required.
+
+---
+
+## ADR-033 — Retrieval foundation and external knowledge ingestion
+
+### Status
+
+Accepted
+
+### Decision
+
+The Retrieval Layer remains inside the existing `assistant/retrieval` package. It owns the `KnowledgeChunk` model, the `KnowledgeRepository` access port, and the `RetrievalService` boundary. `AssistantService` remains responsible only for conversation orchestration and Spring AI generation.
+
+Documents are processed outside the backend: local n8n performs document handling, chunking, and embedding generation; Supabase pgvector stores the indexed knowledge. The production API consumes indexed knowledge only and does not process PDF, DOCX, or Markdown files, generate embeddings, execute SQL, or perform vector search in this sprint.
+
+### Reason
+
+- Isolating Retrieval keeps knowledge access replaceable and independently testable.
+- Keeping ingestion external makes the production runtime smaller, stateless, and predictable.
+- Giving Retrieval ownership of knowledge access prevents AssistantService from coupling chat orchestration to a storage provider.
+- Keeping AssistantService focused on chat preserves cohesion and makes future RAG composition explicit.
+
+### Consequences
+
+V3.2 adds only persistence-agnostic contracts and typed retrieval settings. A future V3.3 adapter may implement `KnowledgeRepository` for pgvector and add similarity retrieval behind `RetrievalService`. No new `knowledge` module or provider abstraction is introduced.

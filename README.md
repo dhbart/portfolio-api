@@ -31,6 +31,7 @@ The backend follows production-minded practices: feature-first organization, HTT
 - Docker and Docker Compose support
 - Integration tests using Testcontainers and PostgreSQL
 - Spring AI foundation for direct OpenAI chat generation
+- Retrieval foundation with provider-independent knowledge contracts
 
 ## Architecture
 
@@ -161,6 +162,10 @@ The datasource is assembled from the following environment variables. Keep crede
 | `OPENAI_API_KEY` | OpenAI API key for the assistant | not committed |
 | `PORTFOLIO_AI_ENABLED` | Enables assistant generation | `true` |
 | `PORTFOLIO_AI_MODEL` | OpenAI chat model | `gpt-4o-mini` |
+| `PORTFOLIO_RETRIEVAL_ENABLED` | Enables future knowledge retrieval | `false` |
+| `PORTFOLIO_RETRIEVAL_VECTOR_STORE` | Future vector-store identifier | `supabase-pgvector` |
+| `PORTFOLIO_RETRIEVAL_DEFAULT_TOP_K` | Future default retrieved chunk count | `5` |
+| `PORTFOLIO_RETRIEVAL_MINIMUM_SCORE` | Future minimum similarity score | `0.7` |
 | `SPRING_PROFILES_ACTIVE` | Active Spring profile | `local` |
 
 `SHOW_SQL` is also supported for development diagnostics and defaults to `false`.
@@ -294,3 +299,29 @@ Documents (PDF, DOCX, Markdown) → Local n8n ingestion
 ```
 
 RAG, embeddings, pgvector, and document ingestion are not implemented yet. n8n is local-only and never runs in production. OmniRoute is optional local experimentation only. The production API does not process documents or generate embeddings; it communicates directly with OpenAI through Spring AI.
+
+### Retrieval architecture
+
+The Assistant module keeps chat orchestration in `AssistantService`. Indexed knowledge is isolated under `assistant/retrieval`:
+
+```text
+AssistantService
+      ↓
+RetrievalService
+      ↓
+KnowledgeRepository
+      ↓
+Future Vector Store (Supabase pgvector)
+```
+
+`KnowledgeChunk` is the store-independent indexed knowledge model. `KnowledgeRepository` and `RetrievalService` are contracts only in this sprint; vector search, pgvector queries, embeddings, RAG, and document processing are not implemented.
+
+Knowledge is produced outside production by the local pipeline:
+
+```text
+PDF / DOCX / Markdown
+    → Local n8n → Chunking → Embedding Generation
+    → Supabase pgvector → Portfolio API Retrieval Layer
+```
+
+Spring AI is responsible for the future generation integration with OpenAI. It does not own ingestion or retrieval storage. The API consumes already-indexed knowledge and never processes source documents or generates embeddings.

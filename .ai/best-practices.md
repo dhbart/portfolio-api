@@ -6,7 +6,7 @@ Keep prompts versioned under `src/main/resources/prompts`, load them through the
 
 ## Retrieval isolation
 
-Future vector search and context assembly must enter through `RetrievalService`. The assistant must not issue ad-hoc database or vector queries.
+Future vector search and context assembly must enter through `RetrievalService`. The assistant must not issue ad-hoc database or vector queries. `KnowledgeRepository` remains independent from Spring AI and pgvector until the vector-search sprint.
 
 ## Stateless services
 

@@ -85,4 +85,8 @@ Project associations are represented explicitly by `ProjectTechnology`, which co
 
 ## Assistant module
 
-The isolated `assistant` module owns the stateless chat controller, immutable chat contracts, AI configuration, prompt loading, and `AssistantService` orchestration. It does not own document ingestion, document parsing, chunking, embeddings, vector storage, or portfolio persistence. `RetrievalService` is the future entry point for knowledge retrieval and is intentionally unimplemented in V3.1. The module uses Spring AI directly with OpenAI and does not add provider abstractions.
+The isolated `assistant` module owns the stateless chat controller, immutable chat contracts, AI configuration, prompt loading, and `AssistantService` orchestration. `AssistantService` remains responsible only for conversation orchestration and generation; it must not know about PDF, DOCX, Markdown, chunking, embeddings, or vector-store details.
+
+The `assistant/retrieval` package owns access to indexed knowledge. `KnowledgeChunk` is the persistence-agnostic knowledge model, `KnowledgeRepository` is the store-independent repository port, and `RetrievalService` is the boundary used by future RAG flows. Retrieval is currently a contract only; vector search, pgvector queries, embeddings, document ingestion, and context assembly remain out of scope.
+
+Knowledge is produced outside the backend by the local n8n pipeline. Production consumes indexed chunks from the future vector store through retrieval adapters and never processes source documents or generates embeddings.
