@@ -23,12 +23,14 @@ The backend follows production-minded practices: feature-first organization, HTT
 - Standard language negotiation through `Accept-Language`
 - Feature-first architecture with application, domain, and infrastructure boundaries
 - PostgreSQL persistence with Flyway-managed migrations
+- Caffeine caching for public read use cases
 - Spring Security foundation for a public API
 - CORS restricted to the configured Angular frontend origin
 - Global exception handling and Bean Validation
 - OpenAPI specification and Swagger UI
 - Docker and Docker Compose support
 - Integration tests using Testcontainers and PostgreSQL
+- Spring AI foundation for direct OpenAI chat generation
 
 ## Architecture
 
@@ -105,14 +107,15 @@ All portfolio endpoints are read-only and support the `Accept-Language` header.
 | --- | --- | --- |
 | `GET` | `/api/v1/hero` | Introductory portfolio content |
 | `GET` | `/api/v1/about` | Professional profile information |
-| `GET` | `/api/v1/experience` | Professional experience |
+| `GET` | `/api/v1/experiences` | Professional experience |
 | `GET` | `/api/v1/projects` | Project list |
 | `GET` | `/api/v1/projects/{slug}` | Project details |
 | `GET` | `/api/v1/technologies` | Technologies and skills |
 | `GET` | `/api/v1/certifications` | Certification list |
-| `GET` | `/api/v1/certifications/{slug}` | Certification details |
+| `GET` | `/api/v1/certifications/{id}` | Certification details |
 | `GET` | `/api/v1/social-links` | Social and contact links |
 | `GET` | `/icons/**` | Public icon assets |
+| `POST` | `/api/v1/assistant/chat` | Stateless AI proof of concept |
 
 Example request:
 
@@ -131,7 +134,7 @@ http://localhost:8080/v3/api-docs
 
 ## Security
 
-The current API is deliberately **public and read-only**. Only `GET` and `OPTIONS` are allowed for the public API and icon resources. CORS is constrained to `FRONTEND_ORIGIN`; authentication is not required for consuming portfolio content.
+The current API is deliberately **public and read-only**. `GET` and CORS preflight `OPTIONS` requests are allowed for the public API and icon resources; unsupported methods are denied. CORS is constrained to `FRONTEND_ORIGIN`, and `/actuator/health` is public for deployment health checks. Authentication is not required for consuming portfolio content.
 
 JWT authentication and role-based authorization are planned for a future administrative API, when content-management operations (`POST`, `PUT`, `PATCH`, and `DELETE`) are introduced.
 
@@ -155,6 +158,9 @@ The datasource is assembled from the following environment variables. Keep crede
 | `PGUSER` | Database user | `portfolio` |
 | `PGPASSWORD` | Database password | `change-me` |
 | `FRONTEND_ORIGIN` | Allowed Angular frontend origin | `http://localhost:4200` |
+| `OPENAI_API_KEY` | OpenAI API key for the assistant | not committed |
+| `PORTFOLIO_AI_ENABLED` | Enables assistant generation | `true` |
+| `PORTFOLIO_AI_MODEL` | OpenAI chat model | `gpt-4o-mini` |
 | `SPRING_PROFILES_ACTIVE` | Active Spring profile | `local` |
 
 `SHOW_SQL` is also supported for development diagnostics and defaults to `false`.
@@ -240,7 +246,7 @@ The suite follows the testing pyramid and is organized by responsibility:
 - repository integration tests use a real PostgreSQL Testcontainer and the production Flyway migrations to verify queries, ordering, locale predicates, slugs, relationships, and seed integrity;
 - controller integration tests use `@SpringBootTest` and MockMvc against the same real application stack to verify JSON contracts, HTTP errors, content negotiation, CORS/OPTIONS, public security rules, health, localization, and cache-backed repeated reads.
 
-Repositories, entities, DTOs, generated Lombok methods, and generated mapper code are intentionally not unit-tested. Confidence comes from exercising critical behavior at the narrowest realistic level, not from maximizing a coverage percentage. No tests are ignored and no H2 database is used.
+Repositories, entities, DTOs, generated Lombok methods, and generated mapper code are intentionally not unit-tested. Confidence comes from exercising critical behavior at the narrowest realistic level, not from maximizing a coverage percentage. No tests are ignored and no H2 database is used. The integration suite verifies Flyway startup from an empty PostgreSQL database, localized seed data, repository relationships, HTTP security/CORS behavior, and actual Caffeine cache population. Tests are organized under `src/test/java` by application, infrastructure, feature, localization, and shared integration support.
 
 ## Troubleshooting Flyway
 
@@ -255,10 +261,10 @@ If Flyway fails at startup, confirm that the PostgreSQL Flyway database module i
 - [x] Angular frontend integration
 - [x] Docker, Render deployment, and Supabase PostgreSQL
 - [x] Swagger/OpenAPI and public health check
-- [ ] Complete security hardening: security configuration, headers, and production profiles
-- [ ] Cache public resources
+- [x] Public security policy, CORS, OPTIONS handling, and health endpoint verification
+- [x] Cache public resources with Caffeine
+- [x] Backend testing strategy with unit, repository, controller, localization, Flyway, security, and cache tests
 - [ ] Rate limiting for the public API
-- [ ] Expand unit and integration test coverage
 - [ ] CI/CD with GitHub Actions
 - [ ] Observability: Actuator metrics and structured logs
 - [ ] JWT-protected administrative API and Angular administration panel
@@ -274,3 +280,17 @@ Angular frontend: [dhbart/bartholdy-portfolio](https://github.com/dhbart/barthol
 ## License
 
 This repository is for personal use and is under active development. No open-source license has been declared.
+
+## Knowledge Platform
+
+The V3.1 foundation adds Spring AI with direct OpenAI access through the stateless `POST /api/v1/assistant/chat` endpoint. Prompts live under `src/main/resources/prompts` and settings use `portfolio.ai.*` configuration properties.
+
+The future RAG architecture is:
+
+```text
+Documents (PDF, DOCX, Markdown) → Local n8n ingestion
+    → Chunking → Embeddings → Supabase pgvector
+    → Portfolio API → RetrievalService → Spring AI → OpenAI → Angular Chat
+```
+
+RAG, embeddings, pgvector, and document ingestion are not implemented yet. n8n is local-only and never runs in production. OmniRoute is optional local experimentation only. The production API does not process documents or generate embeddings; it communicates directly with OpenAI through Spring AI.

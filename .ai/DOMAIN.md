@@ -82,3 +82,7 @@ The API selects content from the `Accept-Language` header. Persistence adapters 
 Technology is intentionally not owned by Project. It can be reused by Projects, Professional Experiences, Certifications, and future Skills or Articles.
 
 Project associations are represented explicitly by `ProjectTechnology`, which contains `project`, `technology`, and `displayOrder`. Relationship-specific business data is not added until a real requirement exists.
+
+## Assistant module
+
+The isolated `assistant` module owns the stateless chat controller, immutable chat contracts, AI configuration, prompt loading, and `AssistantService` orchestration. It does not own document ingestion, document parsing, chunking, embeddings, vector storage, or portfolio persistence. `RetrievalService` is the future entry point for knowledge retrieval and is intentionally unimplemented in V3.1. The module uses Spring AI directly with OpenAI and does not add provider abstractions.

@@ -821,3 +821,49 @@ Technology responses expose `slug` only. Frontends resolve icons with `{apiUrl}/
 ## ADR-030 — Accept-Language localization foundation
 
 `Hero`, `About`, `Project`, `Experience`, and `Certification` store `locale VARCHAR(10)`. Controllers accept `Accept-Language` and delegate it to services. Services resolve supported locale candidates, while repositories apply locale predicates in the database. The fallback order is requested locale, `en-US`, then `pt-BR`; invalid headers follow the same chain and never cause HTTP 500. `V14` backfills `pt-BR`, `V15` seeds `en-US` and `es-ES` for every localized aggregate, and `V16` supplies Spanish portfolio content.
+
+## ADR-031 — Backend testing strategy
+
+### Status
+
+Accepted and implemented in Sprint T1.
+
+### Decision
+
+Use the testing pyramid for the backend: focused unit tests for business behavior, repository integration tests against real PostgreSQL Testcontainers databases, and controller integration tests using `@SpringBootTest` and MockMvc. Flyway migrations, seed data, security, CORS, localization, relationships, ordering, error contracts, and Caffeine cache behavior are validated through integration tests. H2 is not used.
+
+Do not add tests solely to increase coverage. DTOs, entities, generated Lombok/MapStruct code, and trivial repository delegation are not unit-test targets. Tests must be organized by feature and responsibility, use AssertJ, and avoid mocking the database, HTTP layer, or cache in integration tests.
+
+### Reason
+
+This provides production confidence at the narrowest realistic test level while preserving the feature-first architecture and avoiding implementation-detail assertions. A real PostgreSQL database is required because Flyway SQL, PostgreSQL JSONB content, foreign keys, locale predicates, ordering, and schema validation are part of production behavior.
+
+### Consequences
+
+`./gradlew test` requires Docker for Testcontainers. The suite validates the application from an empty database and uses the production migrations. New read features should add proportional service, repository, and controller tests. Cacheable localized methods must use a non-null key when the optional `Accept-Language` header is omitted; the current implementation uses an empty-string key and retains the documented locale fallback.
+
+---
+
+## ADR-032 — Knowledge Platform foundation and production boundaries
+
+### Status
+
+Accepted
+
+### Decision
+
+Knowledge ingestion is external to the backend. Local n8n prepares documents, chunks, and embeddings; Supabase pgvector stores the resulting knowledge. Production consists of Angular, Portfolio API, Spring AI, OpenAI, and Supabase. n8n is never a production dependency. OmniRoute is optional local experimentation infrastructure and is never used by the production backend.
+
+The backend communicates directly with OpenAI through Spring AI. Retrieval is isolated behind `RetrievalService`, while `AssistantService` handles prompt loading and response generation. V3.1 has no retrieval, embeddings, vector search, pgvector integration, or document processing.
+
+### Reason
+
+- External ingestion evolves independently from the API.
+- Production remains small, stateless, and predictable.
+- Direct OpenAI access avoids an unnecessary proxy.
+- Retrieval can be tested independently from generation.
+- The knowledge base, not the LLM, remains the source of truth.
+
+### Consequences
+
+Future RAG must enter through `RetrievalService`; chat generation must not issue ad-hoc vector queries. Provider abstractions remain deferred until a second production provider is required.

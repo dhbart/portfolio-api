@@ -392,3 +392,27 @@ The seed reader is intentionally isolated so it can later be replaced by a
 database-independent catalog source if technology data moves out of Flyway.
 Devicon does not provide an icon for every portfolio concept, so unsupported
 slugs are reported for follow-up instead of being assigned misleading assets.
+
+### Backend testing architecture
+
+Sprint T1 completed the backend testing foundation. Unit tests cover business behavior in services and locale resolution. Repository integration tests use independent PostgreSQL Testcontainers databases, production Flyway migrations, and Hibernate schema validation. Controller integration tests use `@SpringBootTest` with MockMvc against the real application context.
+
+The integration suite verifies all portfolio features, localized queries and fallback behavior, ordering, project slugs, ProjectTechnology foreign-key relationships, seed integrity, error contracts, CORS and OPTIONS handling, public security rules, actuator health, and actual Caffeine cache population. Tests are organized under `src/test/java` by feature and responsibility. DTOs, entities, generated Lombok/MapStruct code, and repository mocks in repository tests are intentionally excluded.
+
+Services use an empty-string cache key when `Accept-Language` is omitted. This preserves the public fallback behavior while avoiding unsupported null keys in Caffeine. Cache entries expire after ten minutes and are bounded to 256 entries.
+
+## 15. Knowledge Platform architecture
+
+The portfolio backend is evolving into a Knowledge Platform. AI concerns are isolated from portfolio persistence features and separated into ingestion, storage, retrieval, and generation:
+
+```text
+Knowledge Sources (PDF, DOCX, Markdown)
+        ↓
+Local n8n ingestion → Chunking → Embeddings
+        ↓
+Supabase pgvector → Portfolio API → RetrievalService
+        ↓
+Spring AI → OpenAI → Angular Chat
+```
+
+Ingestion and storage are external to the production backend. The backend will consume relevant knowledge through `RetrievalService` and delegate natural-language generation to Spring AI and OpenAI. V3.1 is generation-only: no retrieval, memory, embeddings, pgvector, or document processing.

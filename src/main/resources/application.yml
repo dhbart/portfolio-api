@@ -20,6 +20,14 @@ spring:
     open-in-view: false
   flyway:
     enabled: true
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      chat:
+        options:
+          model: ${PORTFOLIO_AI_MODEL:gpt-4o-mini}
+          temperature: ${PORTFOLIO_AI_TEMPERATURE:0.2}
+          max-tokens: ${PORTFOLIO_AI_MAX_TOKENS:512}
 
 management:
   endpoints:
@@ -34,3 +42,9 @@ management:
 portfolio:
   cors:
     allowed-origin: ${FRONTEND_ORIGIN:http://localhost:4200}
+  ai:
+    enabled: ${PORTFOLIO_AI_ENABLED:true}
+    model: ${PORTFOLIO_AI_MODEL:gpt-4o-mini}
+    temperature: ${PORTFOLIO_AI_TEMPERATURE:0.2}
+    max-tokens: ${PORTFOLIO_AI_MAX_TOKENS:512}
+    system-prompt: prompts/system.md

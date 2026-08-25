@@ -462,7 +462,7 @@ Document only business rules or non-obvious decisions.
 
 ---
 
-# Testing (Future)
+# Testing
 
 Every new feature should eventually include:
 
@@ -474,7 +474,7 @@ Testcontainers
 
 ## Testing Strategy
 
-During V2.1, business features may be implemented without automated tests.
+The backend testing phase is implemented. Business behavior must be covered at the narrowest realistic level before a feature is considered complete.
 
 However:
 
@@ -483,7 +483,7 @@ However:
 - Business logic must remain isolated.
 - Architecture must facilitate unit and integration testing.
 
-Test implementation is deferred to the Testing Phase defined in ROADMAP.md.
+Follow the testing pyramid: unit-test business rules and service orchestration; use real PostgreSQL Testcontainers and Flyway for repository behavior; and use `@SpringBootTest` with MockMvc for HTTP contracts, security, localization, and cross-cutting behavior. Do not use H2, mock the database, or add tests solely to increase coverage. DTOs, entities, generated Lombok/MapStruct code, and trivial delegation are not unit-test targets.
 
 ## PostgreSQL and Flyway
 
@@ -578,3 +578,14 @@ Existing files are never overwritten by default. Use the CLI overwrite option
 only when an intentional asset refresh is required. Generated SVGs must be
 reviewed and committed as project assets. The application must never download
 icons at runtime, persist external icon URLs, or expose provider URLs.
+
+## AI Development Standards
+
+- Never hardcode prompts in Java; store templates under `resources/prompts`.
+- Use `@ConfigurationProperties` for centralized AI settings.
+- Never bypass `RetrievalService` when retrieval is introduced.
+- Never mix retrieval with chat generation.
+- Keep AI isolated from portfolio business and persistence modules.
+- Keep assistant services stateless until a memory ADR is accepted.
+- Production uses Spring AI directly with OpenAI; n8n and OmniRoute are not runtime dependencies.
+- The backend does not process documents or generate embeddings.
