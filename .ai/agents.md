@@ -115,4 +115,4 @@ Never consider a feature complete if the database migration is missing.
 
 ## Future AI ecosystem
 
-Recruiter Assistant, Technical Assistant, Resume Assistant, and Interview Assistant are planned capabilities. They will share the same knowledge-first architecture, prompt management, retrieval boundary, Spring AI integration, and stateless service conventions. They are future use cases, not separate provider integrations.
+Recruiter Assistant, Technical Assistant, Resume Assistant, and Interview Assistant are planned capabilities. They will share the same knowledge-first architecture, prompt management, retrieval boundary, Spring AI integration, and stateless service conventions. They are future use cases, not separate provider integrations. Indexed knowledge is consumed through `assistant/retrieval`; the backend does not process documents or generate embeddings.

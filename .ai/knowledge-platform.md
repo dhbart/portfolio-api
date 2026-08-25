@@ -11,12 +11,32 @@ Knowledge Sources (PDF, DOCX, Markdown, future sources)
         ↓
 Local n8n ingestion pipeline → Chunking → Embeddings
         ↓
-Supabase pgvector → Portfolio API → RetrievalService
+Supabase pgvector → Portfolio API → Retrieval Layer → RetrievalService
         ↓
 Spring AI → OpenAI → Angular Chat
 ```
 
-Knowledge Ingestion prepares sources outside the production API. Knowledge Storage owns chunks and embeddings. Knowledge Retrieval selects relevant context through the API. Response Generation uses Spring AI and OpenAI. The backend never processes documents directly, generates embeddings, or owns the ingestion workflow.
+Knowledge Ingestion prepares sources outside the production API. Knowledge Storage owns chunks and embeddings. The Retrieval Layer consumes indexed knowledge through a repository port and exposes the `RetrievalService` boundary to the Assistant module. Response Generation uses Spring AI and OpenAI. The backend never processes documents directly, generates embeddings, or owns the ingestion workflow.
+
+## Retrieval Layer
+
+The Retrieval Layer lives inside `assistant/retrieval` and is independent from the portfolio business modules. Its contracts are `KnowledgeChunk` (the persistence-agnostic indexed-chunk model), `KnowledgeRepository` (the store-independent access port), `RetrievalService` (the future Assistant boundary), and typed `RetrievalProperties`.
+
+This sprint defines contracts only. There is no SQL implementation, similarity search, embeddings, pgvector query, context assembly, or document processing. Future vector-store adapters will implement `KnowledgeRepository`; `AssistantService` remains focused on chat orchestration and must never access a store directly.
+
+## Knowledge lifecycle
+
+```text
+PDF / DOCX / Markdown
+        ↓
+Local n8n → Chunking → Embedding Generation
+        ↓
+Supabase pgvector
+        ↓
+KnowledgeRepository → RetrievalService → AssistantService → Spring AI
+```
+
+The ingestion pipeline is external and local. Production only consumes already-indexed knowledge through the retrieval boundary.
 
 ## Production vs Local Infrastructure
 
@@ -39,7 +59,7 @@ n8n is never part of the production runtime. OmniRoute is only an optional local
 
 ## Future Evolution
 
-Vector Search, RAG, Conversation Memory, Streaming Responses, AI Tools / Function Calling, Knowledge Administration, and additional document sources.
+Vector Search through a pgvector adapter, RAG context assembly, Conversation Memory, Streaming Responses, AI Tools / Function Calling, Knowledge Administration, and additional document sources.
 
 ## Glossary
 

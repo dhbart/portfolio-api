@@ -95,3 +95,18 @@
 - [x] n8n and OmniRoute remain outside the production runtime.
 - [x] `./gradlew test` passes.
 - [x] `./gradlew build` passes.
+
+## Sprint V3.2 — Retrieval Foundation
+
+- [x] Existing `assistant` module structure is preserved; no `knowledge` module was created.
+- [x] `KnowledgeChunk` represents indexed knowledge without persistence or vector-store dependencies.
+- [x] `KnowledgeRepository` defines the store-independent knowledge access port.
+- [x] `RetrievalService` remains the Assistant retrieval boundary and has no retrieval implementation.
+- [x] Retrieval configuration uses typed `@ConfigurationProperties`.
+- [x] Retrieval settings include enablement, future vector-store name, default top-k, and minimum score.
+- [x] No SQL, pgvector queries, embeddings, vector search, RAG, or document ingestion was added.
+- [x] `AssistantService` remains limited to chat orchestration and Spring AI generation.
+- [x] External ingestion lifecycle is documented: local n8n → chunking → embeddings → Supabase pgvector.
+- [x] `knowledge-platform.md`, `architecture.md`, `DOMAIN.md`, `roadmap.md`, `decisions.md`, and `README.md` are synchronized.
+- [x] `./gradlew classes` passes.
+- [x] `./gradlew build` passes at sprint completion.

@@ -410,9 +410,29 @@ Knowledge Sources (PDF, DOCX, Markdown)
         ↓
 Local n8n ingestion → Chunking → Embeddings
         ↓
-Supabase pgvector → Portfolio API → RetrievalService
+Supabase pgvector → Portfolio API → Retrieval Layer → RetrievalService
         ↓
 Spring AI → OpenAI → Angular Chat
 ```
 
-Ingestion and storage are external to the production backend. The backend will consume relevant knowledge through `RetrievalService` and delegate natural-language generation to Spring AI and OpenAI. V3.1 is generation-only: no retrieval, memory, embeddings, pgvector, or document processing.
+Ingestion and storage are external to the production backend. The backend consumes relevant indexed knowledge through the independent Retrieval Layer and delegates natural-language generation to Spring AI and OpenAI.
+
+### Retrieval Layer
+
+The existing `assistant/retrieval` package is the boundary between `AssistantService` and the future vector store:
+
+```text
+AssistantService
+       ↓
+RetrievalService
+       ↓
+KnowledgeRepository
+       ↓
+Future vector-store adapter
+       ↓
+Supabase pgvector
+```
+
+`KnowledgeChunk` represents indexed knowledge without JPA, Spring AI, pgvector, or provider-specific types. `KnowledgeRepository` defines access to indexed knowledge and contains no SQL or similarity-search implementation. `RetrievalService` is the orchestration contract and currently exposes an unsupported placeholder operation. `RetrievalProperties` centralizes the future retrieval settings: enablement, vector-store identifier, default top-k, and minimum score.
+
+V3.2 prepares these contracts only. There is no vector search, pgvector query, embedding generation, RAG context assembly, or document ingestion in the backend. PDF, DOCX, and Markdown flow through local n8n, chunking, embedding generation, and Supabase before production consumes the resulting indexed knowledge.
