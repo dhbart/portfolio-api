@@ -24,10 +24,9 @@ spring:
     openai:
       api-key: ${OPENAI_API_KEY:}
       chat:
-        options:
-          model: ${PORTFOLIO_AI_MODEL:gpt-4o-mini}
-          temperature: ${PORTFOLIO_AI_TEMPERATURE:0.2}
-          max-tokens: ${PORTFOLIO_AI_MAX_TOKENS:512}
+        model: ${PORTFOLIO_AI_MODEL:gpt-4o-mini}
+        temperature: ${PORTFOLIO_AI_TEMPERATURE:0.2}
+        max-tokens: ${PORTFOLIO_AI_MAX_TOKENS:512}
 
 management:
   endpoints:
