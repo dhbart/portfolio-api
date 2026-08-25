@@ -13,7 +13,7 @@
 - [x] Public endpoint is `GET /api/v1/certifications`.
 - [x] Results are ordered by `displayOrder ASC`.
 - [x] Certification aggregate decision documented in DOMAIN.md and ADR-026.
-- [x] No automated tests added, per sprint instructions.
+- [x] Automated tests were added in Sprint T1; this earlier sprint remained within its original scope.
 
 ## Sprint 11 — Static Assets & Technology Icons
 
@@ -46,7 +46,7 @@
 - [x] Swagger UI and OpenAPI endpoints remain public.
 - [x] JWT and login intentionally deferred until administrative endpoints exist.
 - [x] README, architecture, roadmap, and checklist synchronized.
-- [x] No automated tests added, per sprint instructions.
+- [x] Automated tests were added in Sprint T1; this earlier sprint remained within its original scope.
 ## Sprint 12 — Developer Tooling: Icon Synchronizer
 
 - [x] support/icons is separated into provider, downloader, storage, synchronizer, and cli packages.
@@ -69,4 +69,29 @@
 - [x] Services resolve `Accept-Language` and apply `en-US` then `pt-BR` fallback.
 - [x] Controllers keep locale out of endpoint URLs.
 - [x] Localization documentation is synchronized.
-- [ ] `./gradlew test` and database-backed Flyway verification remain final validation steps.
+- [x] `./gradlew test` passes with PostgreSQL Testcontainers and database-backed Flyway verification.
+
+## Sprint T1 — Backend Testing Phase
+
+- [x] Unit tests cover service behavior, localization fallback, exception handling, and project orchestration.
+- [x] Repository integration tests use real PostgreSQL Testcontainers and production Flyway migrations.
+- [x] All domain repositories and ProjectTechnology relationships are validated with database-backed queries.
+- [x] Controller integration tests use `@SpringBootTest` and MockMvc.
+- [x] HTTP contracts, localized responses, fallback behavior, errors, CORS, OPTIONS, security, and health are verified.
+- [x] Caffeine cache population is verified without mocking the cache.
+- [x] No H2 database, ignored tests, or coverage-only tests were introduced.
+- [x] README and architecture documentation describe test execution and strategy.
+
+## Sprint V3.1 — Knowledge Platform Foundation
+
+- [x] Assistant module is isolated from existing portfolio features.
+- [x] Spring AI OpenAI starter is configured through the Spring AI BOM.
+- [x] Production communicates directly with OpenAI through Spring AI.
+- [x] AI settings use `@ConfigurationProperties`.
+- [x] Prompts load from `src/main/resources/prompts`.
+- [x] Chat is stateless and non-streaming.
+- [x] `RetrievalService` exists only as an unimplemented abstraction.
+- [x] No embeddings, pgvector, vector search, RAG, or document ingestion were added.
+- [x] n8n and OmniRoute remain outside the production runtime.
+- [x] `./gradlew test` passes.
+- [x] `./gradlew build` passes.

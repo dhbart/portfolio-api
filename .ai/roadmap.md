@@ -20,6 +20,8 @@ Painel administrativo
 
 ## Status atual
 
+Sprint T1 — Backend Testing Phase: **concluída**. The backend now has unit, PostgreSQL/Flyway repository, controller, localization, security, CORS, health, and Caffeine cache integration coverage. The next product phase remains Angular integration.
+
 Arquitetura definitiva: cada feature possui `application`, `domain`, `infrastructure` e `shared`; repositÃ³rios de domÃ­nio sÃ£o implementados pela infraestrutura.
 
 Os modelos de domÃ­nio seguem ADR-018: Lombok e Jakarta Validation sÃ£o permitidos no domÃ­nio; JPA permanece restrito Ã  infraestrutura.
@@ -262,7 +264,7 @@ Status: **pendente**
 
 - [x] Documentar endpoints com OpenAPI;
 - [x] Padronizar respostas de erro;
-- [ ] Adicionar testes de integração com Testcontainers;
+- [x] Adicionar testes de integração com Testcontainers;
 - [ ] Criar Dockerfile;
 - [ ] Criar configuração Docker Compose para desenvolvimento;
 - [ ] Configurar pipeline de CI;
@@ -404,6 +406,25 @@ Quality
 - Testcontainers
 - Performance
 - Code Coverage
+
+### Sprint T1 — Backend Testing Phase
+
+Status: **concluída**
+
+- [x] Criar testes unitários para regras de serviço, resolução de locale, fallback, exceções e orquestração de projetos.
+- [x] Criar base compartilhada para testes de integração com PostgreSQL Testcontainers.
+- [x] Validar todos os repositórios de domínio com PostgreSQL real, Flyway, ordering, locale, slug, foreign keys e ProjectTechnology.
+- [x] Criar testes de controller com `@SpringBootTest` e MockMvc para todos os endpoints públicos.
+- [x] Validar contratos JSON, respostas localizadas, fallback, erros, CORS, OPTIONS, segurança pública e Actuator Health.
+- [x] Validar a população real do cache Caffeine e o comportamento de requests repetidas.
+- [x] Documentar a estratégia de testes no README, arquitetura, checklist e decisões.
+- [x] Confirmar `./gradlew test` com todos os testes passando.
+
+Critério de conclusão:
+
+- a suíte executa contra PostgreSQL real e migrations de produção;
+- não utiliza H2, testes ignorados ou mocks de banco/cache em testes de integração;
+- o foco permanece em confiança de produção, não em percentual de cobertura.
 ### Sprint 12 — Developer Tooling: Icon Synchronizer
 
 Status: **completed**
@@ -426,3 +447,48 @@ Status: **completed**
 - [x] Add locale predicates to repositories; do not filter languages in memory.
 - [x] Keep locale out of endpoint URLs and preserve Swagger/OpenAPI endpoints.
 - [x] Update localization architecture, domain, decision, roadmap, and checklist documentation.
+
+---
+
+## V3 — Knowledge Platform
+
+V3 is knowledge-first: the knowledge base is the source of truth and the LLM only generates natural-language responses.
+
+### V3.1 — Knowledge Platform Foundation — completed
+
+- [x] Isolated `assistant` module and official Spring AI OpenAI starter.
+- [x] Typed `portfolio.ai.*` configuration and classpath prompt loading.
+- [x] Stateless, non-streaming `POST /api/v1/assistant/chat` proof of concept.
+- [x] Future `RetrievalService` abstraction without retrieval implementation.
+- [x] Documentation of local ingestion and production boundaries.
+- [x] No embeddings, pgvector, RAG, PDF ingestion, or document processing.
+
+### V3.2 — Knowledge Pipeline — planned
+
+- [ ] Local n8n ingestion, chunking, embeddings, and Supabase pgvector storage.
+- [ ] Keep n8n and document processing out of the production runtime.
+
+### V3.3 — Retrieval (RAG) — planned
+
+- [ ] Implement vector retrieval behind `RetrievalService`.
+- [ ] Add bounded context assembly and grounding tests.
+
+### V3.4 — Frontend Chat — planned
+
+- [ ] Integrate Angular chat with loading, error, and empty states.
+
+### V3.5 — Conversation Memory — planned
+
+- [ ] Define conversation identity, retention, privacy, and context limits.
+
+### V3.6 — Streaming — planned
+
+- [ ] Add streaming with cancellation, timeout, and non-streaming fallback behavior.
+
+### V3.7 — AI Tools / Function Calling — planned
+
+- [ ] Define explicit, safe, authorized portfolio tools.
+
+### V3.8 — Knowledge Administration — planned
+
+- [ ] Add protected knowledge source management, indexing status, and versioning.

@@ -54,3 +54,5 @@ Seguir convenções do Angular 22.
 The Hero module is the reference implementation for all future features.
 
 Before implementing any new feature, compare it against Hero and preserve the same architectural style, naming conventions and layering unless explicitly instructed otherwise.
+
+The V3 Assistant module is an isolated application integration: it uses Spring AI and OpenAI for generation, loads prompts from resources, and exposes future retrieval only through `RetrievalService`.

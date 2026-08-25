@@ -112,3 +112,7 @@ A feature is only complete when all of the following are implemented:
 - Documentation updates (if required)
 
 Never consider a feature complete if the database migration is missing.
+
+## Future AI ecosystem
+
+Recruiter Assistant, Technical Assistant, Resume Assistant, and Interview Assistant are planned capabilities. They will share the same knowledge-first architecture, prompt management, retrieval boundary, Spring AI integration, and stateless service conventions. They are future use cases, not separate provider integrations.
