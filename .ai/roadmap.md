@@ -473,9 +473,16 @@ V3 is knowledge-first: the knowledge base is the source of truth and the LLM onl
 - [x] Keep document processing, embeddings, vector search, and pgvector queries out of production.
 
 ### V3.3 — Vector Search (pgvector) — planned
-
-- [ ] Implement a pgvector-backed `KnowledgeRepository` adapter.
+- [x] Sprint 3.3: backend embedding processing with OpenAI and pgvector
+- [x] Implement a pgvector-backed `KnowledgeRepository` adapter.
 - [ ] Implement similarity retrieval behind `RetrievalService`.
+
+### Sprint 3.4 — Retrieval (RAG)
+
+- [x] Implement question embedding and Top K pgvector retrieval.
+- [x] Add bounded context assembly and empty-context handling.
+- [x] Integrate retrieval into chat generation.
+- [x] Add retrieval configuration and unit tests.
 - [ ] Add bounded context assembly and grounding tests.
 - [ ] Keep ingestion and embedding generation outside the production runtime.
 
@@ -498,3 +505,4 @@ V3 is knowledge-first: the knowledge base is the source of truth and the LLM onl
 ### V3.8 — Knowledge Administration — planned
 
 - [ ] Add protected knowledge source management, indexing status, and versioning.
+

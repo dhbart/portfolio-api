@@ -27,7 +27,7 @@ class SocialLinkIntegrationTest {
     @Container
     @ServiceConnection
     static final PostgreSQLContainer<?> POSTGRES =
-            new PostgreSQLContainer<>("postgres:18.4");
+            new PostgreSQLContainer<>("pgvector/pgvector:pg17");
 
     @Autowired
     private MockMvc mockMvc;

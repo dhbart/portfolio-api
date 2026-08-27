@@ -295,10 +295,10 @@ The knowledge flow is:
 ```text
 Documents (PDF, DOCX, Markdown) → n8n ingestion
     → documents/chunks → Spring Boot Processing
-    → OpenAI Embeddings → Supabase pgvector → Future Retrieval → Chat API
+    → OpenAI Embeddings → Supabase pgvector → Retrieval → Chat API
 ```
 
-Document and chunk insertion remains in n8n; n8n no longer generates embeddings. Existing vectors are not regenerated. OpenAI embedding settings use `assistant.ai.embedding.*`; the default model is `text-embedding-3-small`. Chat and retrieval remain outside this sprint.
+Document and chunk insertion remains in n8n; n8n no longer generates embeddings. Existing vectors are not regenerated. OpenAI embedding settings use `assistant.ai.embedding.*`; the default model is `text-embedding-3-small`. Retrieval uses `assistant.ai.retrieval.top-k` (default `5`) and `assistant.ai.retrieval.max-context-length` (default `6000`).
 
 ### Retrieval architecture
 
@@ -312,14 +312,21 @@ EmbeddingService ← OpenAiEmbeddingService
 KnowledgeProcessingRepository ← JDBC/pgvector
 ```
 
-`KnowledgeChunk` remains the store-independent indexed knowledge model. Processing uses `KnowledgeProcessingRepository` and the provider-neutral `EmbeddingService`; retrieval and RAG are not implemented in this sprint.
+`KnowledgeChunk` remains the store-independent indexed knowledge model. `RetrievalService` generates the question embedding and delegates the pgvector query to `KnowledgeRetrievalRepository`; `PromptBuilder` bounds and assembles the context before OpenAI generation.
+
+The chat flow is:
+
+```text
+User → AssistantController → ChatService → RetrievalService
+     → EmbeddingService → pgvector → PromptBuilder → OpenAI → Response
+```
 
 Knowledge is produced outside production by the local pipeline:
 
 ```text
 PDF / DOCX / Markdown
     → n8n → documents/chunks → Spring Boot Processing
-    → OpenAI Embeddings → Supabase pgvector → Future Retrieval Layer
+    → OpenAI Embeddings → Supabase pgvector → Retrieval Layer
 ```
 
 Spring AI remains available for the existing/future assistant generation path, but it does not own embedding processing in Sprint 3.3.

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -16,6 +17,11 @@ public class JdbcKnowledgeProcessingRepository implements KnowledgeProcessingRep
 
     public JdbcKnowledgeProcessingRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public JdbcKnowledgeProcessingRepository(ObjectProvider<JdbcTemplate> jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate.getIfAvailable();
     }
 
     @Override

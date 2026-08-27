@@ -110,3 +110,26 @@
 - [x] `knowledge-platform.md`, `architecture.md`, `DOMAIN.md`, `roadmap.md`, `decisions.md`, and `README.md` are synchronized.
 - [x] `./gradlew classes` passes.
 - [x] `./gradlew build` passes at sprint completion.
+
+# Sprint 3.3 Checklist
+
+- [x] `POST /api/v1/admin/knowledge/process/{documentId}` returns `202` and `{"status":"processing"}`
+- [x] Validate document existence and processing status
+- [x] Process only chunks with `embedding IS NULL`
+- [x] Persist embeddings as pgvector values
+- [x] Set processing timestamps and terminal status
+
+# Sprint 3.4 Checklist
+
+- [x] Generate question embeddings through the existing `EmbeddingService`
+- [x] Execute Top K cosine-distance retrieval in `KnowledgeRetrievalRepository`
+- [x] Assemble ordered, size-bounded context with `PromptBuilder`
+- [x] Route chat through retrieval before OpenAI
+- [x] Handle empty context without exceptions
+- [x] Log question, chunk count, distances, retrieval, OpenAI and total timings
+- [x] Add unit coverage for retrieval and prompt context limits
+- [x] Persist error messages and avoid documents stuck in `PROCESSING`
+- [x] Configurable model, timeout and exponential retry
+- [x] Unit tests for processing service, provider adapter and controller
+- [x] Architecture and flow documentation
+- [x] No frontend or n8n workflow changes

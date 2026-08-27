@@ -433,6 +433,57 @@ Future vector-store adapter
 Supabase pgvector
 ```
 
-`KnowledgeChunk` represents indexed knowledge without JPA, Spring AI, pgvector, or provider-specific types. `KnowledgeRepository` defines access to indexed knowledge and contains no SQL or similarity-search implementation. `RetrievalService` is the orchestration contract and currently exposes an unsupported placeholder operation. `RetrievalProperties` centralizes the future retrieval settings: enablement, vector-store identifier, default top-k, and minimum score.
+`KnowledgeChunk` represents indexed knowledge without JPA or provider-specific types. `KnowledgeRetrievalRepository` owns the pgvector SQL, while `RetrievalService` orchestrates embedding and retrieval. `RetrievalProperties` centralizes `top-k` and maximum context length.
 
 V3.2 prepares these contracts only. There is no vector search, pgvector query, embedding generation, RAG context assembly, or document ingestion in the backend. PDF, DOCX, and Markdown flow through local n8n, chunking, embedding generation, and Supabase before production consumes the resulting indexed knowledge.
+
+# Architecture
+
+## Sprint 3.3 — AI Processing Service
+
+Document ingestion remains the responsibility of n8n. After n8n stores a document and its chunks, it calls the backend processing endpoint. The backend owns provider access, embedding persistence, status transitions and error recovery.
+
+```text
+n8n
+  ↓
+knowledge.documents
+knowledge.chunks (embedding IS NULL)
+  ↓ POST /api/v1/admin/knowledge/process/{documentId}
+Spring Boot Processing Service
+  ↓
+OpenAI Embeddings (text-embedding-3-small)
+  ↓
+knowledge.chunks.embedding (pgvector)
+  ↓
+Chat API (future retrieval integration)
+```
+
+`KnowledgeProcessingService` depends only on `EmbeddingService` and `KnowledgeProcessingRepository`. `OpenAiEmbeddingService` is the sole OpenAI embeddings adapter, so a future Azure OpenAI, OpenRouter or Ollama adapter can replace it without changing orchestration or persistence.
+
+## Sprint 3.4 — Retrieval (RAG)
+
+The implemented RAG path preserves the assistant boundaries:
+
+```text
+User
+  ↓
+AssistantController
+  ↓
+ChatService
+  ↓
+RetrievalService
+  ↓
+EmbeddingService
+  ↓
+KnowledgeRetrievalRepository → pgvector
+  ↓
+PromptBuilder
+  ↓
+OpenAI
+  ↓
+Response
+```
+
+All vector SQL is owned by `KnowledgeRetrievalRepository`. Retrieval returns chunks in similarity order, and `PromptBuilder` stops context assembly at `assistant.ai.retrieval.max-context-length`. Empty retrieval adds the internal `No relevant knowledge was found.` notice without failing the request.
+
+The endpoint returns `202 Accepted` and processing runs asynchronously. Existing embeddings are never regenerated. A provider or persistence error marks the document `FAILED`, records `error_message` and sets `processing_finished_at`.

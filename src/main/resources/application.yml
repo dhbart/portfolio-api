@@ -37,6 +37,9 @@ assistant:
       timeout: ${OPENAI_EMBEDDING_TIMEOUT:30s}
       max-attempts: ${OPENAI_EMBEDDING_MAX_ATTEMPTS:3}
       initial-backoff: ${OPENAI_EMBEDDING_INITIAL_BACKOFF:500ms}
+    retrieval:
+      top-k: ${PORTFOLIO_RETRIEVAL_TOP_K:5}
+      max-context-length: ${PORTFOLIO_RETRIEVAL_MAX_CONTEXT_LENGTH:6000}
 
 management:
   endpoints:
@@ -57,8 +60,3 @@ portfolio:
     temperature: ${PORTFOLIO_AI_TEMPERATURE:0.2}
     max-tokens: ${PORTFOLIO_AI_MAX_TOKENS:512}
     system-prompt: prompts/system.md
-  retrieval:
-    enabled: ${PORTFOLIO_RETRIEVAL_ENABLED:false}
-    vector-store: ${PORTFOLIO_RETRIEVAL_VECTOR_STORE:supabase-pgvector}
-    default-top-k: ${PORTFOLIO_RETRIEVAL_DEFAULT_TOP_K:5}
-    minimum-score: ${PORTFOLIO_RETRIEVAL_MINIMUM_SCORE:0.7}

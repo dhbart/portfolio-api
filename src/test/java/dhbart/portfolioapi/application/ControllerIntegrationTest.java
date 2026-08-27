@@ -15,7 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureMockMvc
 class ControllerIntegrationTest extends IntegrationTestBase {
-    @Autowired MockMvc mockMvc;
+    @Autowired
+    MockMvc mockMvc;
     @Autowired CacheManager cacheManager;
 
     @Test

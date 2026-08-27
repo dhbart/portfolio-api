@@ -892,3 +892,19 @@ Documents are processed outside the backend: local n8n performs document handlin
 ### Consequences
 
 V3.2 adds only persistence-agnostic contracts and typed retrieval settings. A future V3.3 adapter may implement `KnowledgeRepository` for pgvector and add similarity retrieval behind `RetrievalService`. No new `knowledge` module or provider abstraction is introduced.
+
+## ADR-034 — Embeddings belong to the backend
+
+n8n stores documents and chunks only. The processing endpoint makes the provider call so status, retries, failures and persistence are controlled by one application boundary.
+
+## Provider isolation
+
+The application depends on the `EmbeddingService` port. OpenAI access is implemented by `OpenAiEmbeddingService` using the official `/v1/embeddings` API and Java's HTTP client. Spring AI is not used for embeddings in this sprint.
+
+## ADR: Keep vector SQL in KnowledgeRetrievalRepository
+
+Sprint 3.4 implements RAG by making `RetrievalService` an orchestration service: it creates the question embedding and delegates vector search to `KnowledgeRetrievalRepository`. This keeps PostgreSQL/pgvector details out of application services and allows the retrieval adapter to be replaced independently. `ChatService` then passes the ordered chunks to `PromptBuilder`, which enforces the configured context length before OpenAI generation.
+
+## Persistence isolation
+
+Knowledge processing uses a repository port and a JDBC adapter. JDBC is used because pgvector is a PostgreSQL type; the rest of the application does not need pgvector-specific entities or APIs.
