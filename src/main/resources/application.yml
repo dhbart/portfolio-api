@@ -26,7 +26,17 @@ spring:
       chat:
         model: ${PORTFOLIO_AI_MODEL:gpt-4o-mini}
         temperature: ${PORTFOLIO_AI_TEMPERATURE:0.2}
-        max-tokens: ${PORTFOLIO_AI_MAX_TOKENS:512}
+      max-tokens: ${PORTFOLIO_AI_MAX_TOKENS:512}
+
+assistant:
+  ai:
+    embedding:
+      api-key: ${OPENAI_API_KEY:}
+      endpoint: ${OPENAI_EMBEDDINGS_ENDPOINT:https://api.openai.com/v1/embeddings}
+      model: ${OPENAI_EMBEDDING_MODEL:text-embedding-3-small}
+      timeout: ${OPENAI_EMBEDDING_TIMEOUT:30s}
+      max-attempts: ${OPENAI_EMBEDDING_MAX_ATTEMPTS:3}
+      initial-backoff: ${OPENAI_EMBEDDING_INITIAL_BACKOFF:500ms}
 
 management:
   endpoints:

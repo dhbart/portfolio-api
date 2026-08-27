@@ -1,21 +1,30 @@
 services:
+
   postgres:
-    image: postgres:18.4
-    container_name: portfolio-api-postgres
+    image: pgvector/pgvector:pg17
+    container_name: portfolio-postgres
+
     restart: unless-stopped
+
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-portfolio}
       POSTGRES_USER: ${POSTGRES_USER:-portfolio}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-portfolio}
+
     ports:
       - "5432:5432"
+
     volumes:
-      - portfolio-postgres-data:/var/lib/postgresql
+      - portfolio-postgres-data:/var/lib/postgresql/data
+
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
+
+    networks:
+      - ai-network
 
 
   portfolio-api:
@@ -24,16 +33,71 @@ services:
 
     container_name: portfolio-api
 
+    restart: unless-stopped
+
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/portfolio
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-portfolio}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-portfolio}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-portfolio}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
 
     ports:
       - "8080:8080"
 
+    networks:
+      - ai-network
+
+
+  n8n:
+
+    image: docker.n8n.io/n8nio/n8n:latest
+
+    container_name: n8n-local
+
+    restart: unless-stopped
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    ports:
+      - "5678:5678"
+
+    environment:
+      GENERIC_TIMEZONE: America/Sao_Paulo
+      TZ: America/Sao_Paulo
+
+      N8N_RUNNERS_ENABLED: "false"
+
+      NODE_FUNCTION_ALLOW_BUILTIN: fs
+
+      N8N_ALLOW_LIST_PATH: /home/node/documents
+
+      N8N_RESTRICT_FILE_ACCESS_TO: /home/node/documents/
+
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
+
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: false
+
+      NODES_EXCLUDE: "[]"
+
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./documents:/home/node/documents
+
+    networks:
+      - ai-network
+
+
 volumes:
   portfolio-postgres-data:
+  n8n_data:
+
+
+networks:
+  ai-network:
+    driver: bridge

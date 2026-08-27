@@ -34,3 +34,13 @@ management:
 portfolio:
   cors:
     allowed-origin: ${FRONTEND_ORIGIN:http://localhost:4200}
+
+assistant:
+  ai:
+    embedding:
+      api-key: ${OPENAI_API_KEY:}
+      endpoint: ${OPENAI_EMBEDDINGS_ENDPOINT:https://api.openai.com/v1/embeddings}
+      model: ${OPENAI_EMBEDDING_MODEL:text-embedding-3-small}
+      timeout: ${OPENAI_EMBEDDING_TIMEOUT:30s}
+      max-attempts: ${OPENAI_EMBEDDING_MAX_ATTEMPTS:3}
+      initial-backoff: ${OPENAI_EMBEDDING_INITIAL_BACKOFF:500ms}

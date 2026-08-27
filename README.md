@@ -288,40 +288,38 @@ This repository is for personal use and is under active development. No open-sou
 
 ## Knowledge Platform
 
-The V3.1 foundation adds Spring AI with direct OpenAI access through the stateless `POST /api/v1/assistant/chat` endpoint. Prompts live under `src/main/resources/prompts` and settings use `portfolio.ai.*` configuration properties.
+The assistant foundation keeps chat and prompt configuration under `portfolio.ai.*`. Starting with Sprint 3.3, the backend owns embedding processing through `POST /api/v1/admin/knowledge/process/{documentId}`. The endpoint returns `202 Accepted` and processes pending chunks asynchronously.
 
-The future RAG architecture is:
+The knowledge flow is:
 
 ```text
-Documents (PDF, DOCX, Markdown) → Local n8n ingestion
-    → Chunking → Embeddings → Supabase pgvector
-    → Portfolio API → RetrievalService → Spring AI → OpenAI → Angular Chat
+Documents (PDF, DOCX, Markdown) → n8n ingestion
+    → documents/chunks → Spring Boot Processing
+    → OpenAI Embeddings → Supabase pgvector → Future Retrieval → Chat API
 ```
 
-RAG, embeddings, pgvector, and document ingestion are not implemented yet. n8n is local-only and never runs in production. OmniRoute is optional local experimentation only. The production API does not process documents or generate embeddings; it communicates directly with OpenAI through Spring AI.
+Document and chunk insertion remains in n8n; n8n no longer generates embeddings. Existing vectors are not regenerated. OpenAI embedding settings use `assistant.ai.embedding.*`; the default model is `text-embedding-3-small`. Chat and retrieval remain outside this sprint.
 
 ### Retrieval architecture
 
-The Assistant module keeps chat orchestration in `AssistantService`. Indexed knowledge is isolated under `assistant/retrieval`:
+The Assistant module keeps chat orchestration in `AssistantService`. Indexed knowledge and processing ports are isolated under `assistant/retrieval`:
 
 ```text
-AssistantService
+KnowledgeProcessingService
       ↓
-RetrievalService
+EmbeddingService ← OpenAiEmbeddingService
       ↓
-KnowledgeRepository
-      ↓
-Future Vector Store (Supabase pgvector)
+KnowledgeProcessingRepository ← JDBC/pgvector
 ```
 
-`KnowledgeChunk` is the store-independent indexed knowledge model. `KnowledgeRepository` and `RetrievalService` are contracts only in this sprint; vector search, pgvector queries, embeddings, RAG, and document processing are not implemented.
+`KnowledgeChunk` remains the store-independent indexed knowledge model. Processing uses `KnowledgeProcessingRepository` and the provider-neutral `EmbeddingService`; retrieval and RAG are not implemented in this sprint.
 
 Knowledge is produced outside production by the local pipeline:
 
 ```text
 PDF / DOCX / Markdown
-    → Local n8n → Chunking → Embedding Generation
-    → Supabase pgvector → Portfolio API Retrieval Layer
+    → n8n → documents/chunks → Spring Boot Processing
+    → OpenAI Embeddings → Supabase pgvector → Future Retrieval Layer
 ```
 
-Spring AI is responsible for the future generation integration with OpenAI. It does not own ingestion or retrieval storage. The API consumes already-indexed knowledge and never processes source documents or generates embeddings.
+Spring AI remains available for the existing/future assistant generation path, but it does not own embedding processing in Sprint 3.3.
