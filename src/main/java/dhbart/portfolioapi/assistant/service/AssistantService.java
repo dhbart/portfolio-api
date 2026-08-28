@@ -9,14 +9,18 @@ public class AssistantService {
 
     private final ChatService chatService;
     private final HybridRetrievalService hybridRetrievalService;
+    private final AssistantInputValidator inputValidator;
 
     public AssistantService(
-            ChatService chatService, HybridRetrievalService hybridRetrievalService) {
+            ChatService chatService, HybridRetrievalService hybridRetrievalService,
+            AssistantInputValidator inputValidator) {
         this.chatService = chatService;
         this.hybridRetrievalService = hybridRetrievalService;
+        this.inputValidator = inputValidator;
     }
 
     public ChatResponse chat(String message) {
+        inputValidator.validate(message);
         return chatService.chat(message, hybridRetrievalService.retrieve(message));
     }
 }

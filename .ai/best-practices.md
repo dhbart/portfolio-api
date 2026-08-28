@@ -23,3 +23,7 @@ Future retrieval must bound chunk count and size before sending context to the m
 ## Future streaming
 
 Streaming is deferred. When introduced, preserve the non-streaming contract and define cancellation, timeouts, errors, and partial responses.
+
+## Hardening
+
+Use typed configuration for AI limits and resilience. Treat user input and retrieved content as untrusted data, keep provider retries in one gateway, and log only operational metadata.

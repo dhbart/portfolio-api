@@ -11,11 +11,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableConfigurationProperties(AdminSecurityProperties.class)
+@EnableConfigurationProperties({AdminSecurityProperties.class, RateLimitProperties.class})
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, AdminSecurityProperties properties) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, AdminSecurityProperties properties,
+                                            RateLimitProperties rateLimitProperties) throws Exception {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -25,6 +26,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .addFilterBefore(new AdminApiKeyFilter(properties), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new AssistantRateLimitFilter(rateLimitProperties), AdminApiKeyFilter.class)
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/admin/**")

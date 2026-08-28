@@ -29,7 +29,7 @@ public class RetrievalService {
         long vectorStarted = System.nanoTime();
         List<KnowledgeChunk> chunks = repository.findSimilar(embedding, properties.topK());
         long vectorMs = (System.nanoTime() - vectorStarted) / 1_000_000;
-        log.info("Knowledge retrieval completed: question={}, chunks={}, distances={}, vectorSearchMs={}, elapsedMs={}", question,
+        log.info("Knowledge retrieval completed: chunks={}, distances={}, vectorSearchMs={}, elapsedMs={}",
                 chunks.size(), chunks.stream().map(KnowledgeChunk::getSimilarityScore).toList(),
                 vectorMs, (System.nanoTime() - started) / 1_000_000);
         return chunks;

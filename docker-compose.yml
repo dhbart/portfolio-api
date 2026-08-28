@@ -75,19 +75,12 @@ services:
     environment:
       GENERIC_TIMEZONE: America/Sao_Paulo
       TZ: America/Sao_Paulo
-
       N8N_RUNNERS_ENABLED: "false"
-
       NODE_FUNCTION_ALLOW_BUILTIN: fs
-
       N8N_ALLOW_LIST_PATH: /home/node/documents
-
       N8N_RESTRICT_FILE_ACCESS_TO: /home/node/documents/
-
       N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
-
       N8N_BLOCK_ENV_ACCESS_IN_NODE: false
-
       NODES_EXCLUDE: "[]"
 
     volumes:

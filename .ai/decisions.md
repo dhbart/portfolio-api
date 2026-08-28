@@ -939,7 +939,7 @@ Accepted and implemented in Sprint 14.
 
 Every endpoint under `/api/v1/admin/**` is protected by a stateless Spring Security filter. Clients must provide the expected value in `X-API-KEY`. The expected value is typed configuration at `portfolio.security.admin-api-key` and may be supplied through `PORTFOLIO_ADMIN_API_KEY`. Missing, blank, or invalid keys return HTTP 401.
 
-The filter authenticates valid requests before authorization and is applied outside controllers. Public portfolio endpoints, static icons, Swagger/OpenAPI, `/actuator/health`, and `POST /api/v1/assistant/chat` remain public. Basic Authentication, JWT, OAuth, rate limiting, and abuse protection are deferred.
+The filter authenticates valid requests before authorization and is applied outside controllers. Public portfolio endpoints, static icons, Swagger/OpenAPI, `/actuator/health`, and `POST /api/v1/assistant/chat` remain public. Basic Authentication, JWT, and OAuth remain deferred; assistant rate limiting and provider abuse controls are implemented in Sprint 15.
 
 ### Reason
 
@@ -948,3 +948,17 @@ The current administrative surface is machine-to-machine and requires a small, f
 ### Consequences
 
 The application fails closed when the configured key is absent. API-key comparison uses constant-time byte comparison. API-key rotation currently requires configuration change and application restart.
+
+## ADR-037 - Public assistant hardening
+
+### Status
+
+Accepted and implemented.
+
+### Decision
+
+Keep public assistant chat, but protect it with configurable per-IP Bucket4j limiting. Use one Resilience4j gateway with timeout, exponential retry for transient provider failures, circuit breaker, and bulkhead. Reject oversized messages and common instruction-override attempts, and delimit untrusted retrieved context and user input in the prompt. Return safe fallbacks and never expose provider details.
+
+### Consequences
+
+Limits are process-local for the current single-instance deployment. A shared limiter, authenticated-user quotas, streaming controls, and stronger identity remain future work.

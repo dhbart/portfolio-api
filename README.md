@@ -140,7 +140,7 @@ The current API is deliberately **public and read-only**. `GET` and CORS preflig
 
 Every `/api/v1/admin/**` endpoint requires `X-API-KEY`; missing or invalid keys return `401 Unauthorized`. Configure the expected value with `PORTFOLIO_ADMIN_API_KEY`, bound to `portfolio.security.admin-api-key`. `POST /api/v1/assistant/chat` remains public during this sprint.
 
-Basic Authentication, JWT, and OAuth are planned for future authentication work. Rate limiting and abuse protection are also deferred.
+Basic Authentication, JWT, and OAuth are planned for future authentication work. Public assistant abuse controls are implemented through per-IP rate limiting and provider resilience.
 
 ## Prerequisites
 
@@ -164,6 +164,9 @@ The datasource is assembled from the following environment variables. Keep crede
 | `FRONTEND_ORIGIN` | Allowed Angular frontend origin | `http://localhost:4200` |
 | `OPENAI_API_KEY` | OpenAI API key for the assistant | not committed |
 | `PORTFOLIO_AI_ENABLED` | Enables assistant generation | `true` |
+| `PORTFOLIO_AI_RATE_LIMIT_CAPACITY` | Assistant requests per rolling window and IP | `10` |
+| `PORTFOLIO_AI_MAX_MESSAGE_LENGTH` | Maximum assistant message length | `2000` |
+| `PORTFOLIO_AI_TIMEOUT` | OpenAI chat timeout | `20s` |
 | `PORTFOLIO_ADMIN_API_KEY` | API key required by `/api/v1/admin/**` | not committed |
 | `PORTFOLIO_AI_MODEL` | OpenAI chat model | `gpt-4o-mini` |
 | `PORTFOLIO_RETRIEVAL_ENABLED` | Enables future knowledge retrieval | `false` |
@@ -292,7 +295,7 @@ This repository is for personal use and is under active development. No open-sou
 
 ## Knowledge Platform
 
-The assistant foundation keeps chat and prompt configuration under `portfolio.ai.*`. Starting with Sprint 3.3, the backend owns embedding processing through `POST /api/v1/admin/knowledge/process/{documentId}`. The endpoint returns `202 Accepted` and processes pending chunks asynchronously.
+The assistant foundation keeps chat and prompt configuration under `portfolio.ai.*`. The public chat endpoint is protected by per-IP Bucket4j limiting and configurable input bounds. OpenAI chat generation uses a single Resilience4j gateway with timeout, transient retry, circuit breaker, and bulkhead; provider failures return a safe fallback.
 
 The knowledge flow is:
 

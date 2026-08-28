@@ -80,4 +80,4 @@ Vector Search through a pgvector adapter, RAG context assembly, Conversation Mem
 - **Knowledge Platform:** A system that ingests, stores, retrieves, and presents knowledge.
 - **Ingestion Pipeline:** A workflow transforming sources into stored chunks and embeddings.
 
-The knowledge processing endpoint `POST /api/v1/admin/knowledge/process/{documentId}` is an administrative operation protected by the platform `X-API-KEY` boundary. The public assistant chat endpoint remains unauthenticated during Sprint 14.
+The knowledge processing endpoint `POST /api/v1/admin/knowledge/process/{documentId}` is an administrative operation protected by the platform `X-API-KEY` boundary. The public assistant chat endpoint remains unauthenticated during Sprint 14 and is now protected by per-IP Bucket4j limiting, configurable input/prompt bounds, prompt trust boundaries, and a single Resilience4j gateway for timeout, transient retry, circuit breaker, and bulkhead. Provider failures return a safe fallback without exposing internal details.

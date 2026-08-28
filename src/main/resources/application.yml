@@ -52,6 +52,11 @@ management:
         enabled: true
 
 portfolio:
+  rate-limit:
+    assistant:
+      capacity: ${PORTFOLIO_AI_RATE_LIMIT_CAPACITY:10}
+      window: ${PORTFOLIO_AI_RATE_LIMIT_WINDOW:1m}
+      retry-after: ${PORTFOLIO_AI_RATE_LIMIT_RETRY_AFTER:60s}
   security:
     admin-api-key: ${PORTFOLIO_ADMIN_API_KEY:}
   cors:
@@ -62,3 +67,14 @@ portfolio:
     temperature: ${PORTFOLIO_AI_TEMPERATURE:0.2}
     max-tokens: ${PORTFOLIO_AI_MAX_TOKENS:512}
     system-prompt: prompts/system.md
+    hardening:
+      max-message-length: ${PORTFOLIO_AI_MAX_MESSAGE_LENGTH:2000}
+      max-prompt-length: ${PORTFOLIO_AI_MAX_PROMPT_LENGTH:12000}
+      reject-injection-attempts: ${PORTFOLIO_AI_REJECT_INJECTION_ATTEMPTS:true}
+    resilience:
+      timeout: ${PORTFOLIO_AI_TIMEOUT:20s}
+      retry-attempts: ${PORTFOLIO_AI_RETRY_ATTEMPTS:3}
+      initial-backoff: ${PORTFOLIO_AI_INITIAL_BACKOFF:500ms}
+      failure-rate-threshold: ${PORTFOLIO_AI_FAILURE_RATE_THRESHOLD:50}
+      sliding-window-size: ${PORTFOLIO_AI_SLIDING_WINDOW_SIZE:10}
+      bulkhead-max-concurrent-calls: ${PORTFOLIO_AI_BULKHEAD_MAX_CONCURRENT_CALLS:4}

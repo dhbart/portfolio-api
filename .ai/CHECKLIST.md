@@ -155,6 +155,17 @@
 - [x] Return HTTP 401 for missing, blank, or invalid keys.
 - [x] Keep portfolio resources, icons, Swagger/OpenAPI, health, and assistant chat public.
 - [x] Keep API-key validation in a reusable Spring Security filter; no controller-level security logic.
-- [x] Keep Basic Authentication, JWT, OAuth, rate limiting, and abuse protection out of scope.
+- [x] Keep Basic Authentication, JWT, and OAuth out of scope; assistant rate limiting is implemented in Sprint 15.
 - [x] Add MockMvc coverage for missing, invalid, and valid admin keys and public assistant chat.
 - [x] Synchronize security architecture, standards, decisions, roadmap, README, and environment documentation.
+
+## Sprint 15 - AI Hardening Sprint
+
+- [x] Configurable Bucket4j per-IP limit for assistant chat.
+- [x] Localized `429` response with `Retry-After`.
+- [x] Consistent global error contract with validation field errors.
+- [x] Configurable message and prompt limits.
+- [x] Prompt injection checks and explicit untrusted-data delimiters.
+- [x] Resilience4j timeout, retry, circuit breaker, and bulkhead.
+- [x] Safe OpenAI fallback and redacted operational logging.
+- [x] Assistant refactoring and focused tests.

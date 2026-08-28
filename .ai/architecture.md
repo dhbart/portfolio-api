@@ -509,4 +509,8 @@ The endpoint returns `202 Accepted` and processing runs asynchronously. Existing
 
 Spring Security applies a stateless API-key boundary to every `/api/v1/admin/**` request. Clients must provide `X-API-KEY`; the expected value is bound from `portfolio.security.admin-api-key` and can be overridden with `PORTFOLIO_ADMIN_API_KEY`. Missing, blank, or invalid keys return HTTP 401. Validation lives in the reusable `AdminApiKeyFilter`, not in controllers, and compares key bytes in constant time.
 
-The portfolio resources, `/icons/**`, Swagger/OpenAPI, `/actuator/health`, and `POST /api/v1/assistant/chat` remain public. Basic Authentication, JWT, OAuth, rate limiting, and abuse protection remain deferred.
+The portfolio resources, `/icons/**`, Swagger/OpenAPI, `/actuator/health`, and `POST /api/v1/assistant/chat` remain public. Basic Authentication, JWT, and OAuth remain deferred. The assistant now has Bucket4j per-IP limiting, prompt/input hardening, and a Resilience4j provider gateway.
+
+## AI Hardening Sprint
+
+The assistant filter applies configurable per-IP Bucket4j rolling-window limits and returns localized `429` responses with `Retry-After`. `AssistantService` validates input and orchestrates the use case, `PromptService` assembles explicit trust boundaries, and `OpenAiResilienceService` owns one Resilience4j chain for timeout, transient retry, circuit breaking, and bulkhead control. Provider failures return a safe fallback; logs contain counts and timings only.

@@ -12,12 +12,18 @@ public class PromptBuilder {
     public String build(String systemPrompt, Context context, String question, int maxContextLength) {
         StringBuilder assembled = new StringBuilder();
         context.structuredSections().forEach((section, content) -> append(assembled, section, content, maxContextLength));
-        if (!context.vectorChunks().isEmpty()) {
-            append(assembled, "VECTOR KNOWLEDGE", context.vectorChunks().stream()
-                    .map(KnowledgeChunk::getContent).reduce((a, b) -> a + "\n\n" + b).orElse(""), maxContextLength);
+        StringBuilder vectorContext = new StringBuilder();
+        for (KnowledgeChunk chunk : context.vectorChunks()) {
+            if (chunk.getContent() == null || chunk.getContent().isBlank()) continue;
+            String separator = vectorContext.isEmpty() ? "" : "\n\n";
+            if (vectorContext.length() + separator.length() + chunk.getContent().length() > maxContextLength) break;
+            vectorContext.append(separator).append(chunk.getContent());
         }
+        append(assembled, "VECTOR KNOWLEDGE", vectorContext.toString(), Integer.MAX_VALUE);
         if (assembled.isEmpty()) assembled.append(EMPTY_CONTEXT_WARNING);
-        return systemPrompt + "\n\nContext\n\n" + assembled + "\n\nQuestion\n\n" + question;
+        return systemPrompt + "\n\n<retrieved_context>\n" + assembled
+                + "\n</retrieved_context>\n\n<user_question>\n" + question
+                + "\n</user_question>";
     }
 
     private void append(StringBuilder target, String section, String content, int maxLength) {
@@ -26,20 +32,4 @@ public class PromptBuilder {
         if (target.length() + candidate.length() <= maxLength) target.append(candidate);
     }
 
-    public String build(String systemPrompt, List<KnowledgeChunk> chunks, String question, int maxContextLength) {
-        StringBuilder context = new StringBuilder();
-        for (KnowledgeChunk chunk : chunks) {
-            String content = chunk.getContent();
-            int separatorLength = context.isEmpty() ? 0 : 2;
-            if (content == null || context.length() + separatorLength + content.length() > maxContextLength) break;
-            if (!context.isEmpty()) context.append("\n\n");
-            context.append(content);
-        }
-        if (context.isEmpty()) context.append(EMPTY_CONTEXT_WARNING);
-        return systemPrompt + "\n\nContext\n\n" + context + "\n\nQuestion\n\n" + question;
-    }
-
-    public String build(String systemPrompt, List<KnowledgeChunk> chunks, String question) {
-        return build(systemPrompt, chunks, question, Integer.MAX_VALUE);
-    }
 }

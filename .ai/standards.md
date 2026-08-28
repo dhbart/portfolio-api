@@ -598,3 +598,12 @@ icons at runtime, persist external icon URLs, or expose provider URLs.
 - Return HTTP 401 for missing, blank, or invalid keys and fail closed when no key is configured.
 - Keep the public portfolio API, static icons, Swagger/OpenAPI, health check, and `POST /api/v1/assistant/chat` public until a later sprint changes their policy.
 - Do not introduce Basic Authentication, JWT, or OAuth as part of this sprint.
+
+## AI Hardening Standards
+
+- Protect public AI calls with reusable infrastructure rate limiting; controllers must not implement quotas.
+- Keep AI limits, safety flags, timeouts, retries, circuit-breaker thresholds, and bulkhead limits in typed configuration.
+- Retry only transient provider failures and keep one retry layer around the chat provider.
+- Treat user input and retrieved context as untrusted data; never allow them to override system instructions.
+- Never log prompts, responses, embeddings, API keys, or authorization headers.
+- Return safe, localized error contracts without stack traces or provider details.

@@ -90,3 +90,5 @@ The isolated `assistant` module owns the stateless chat controller, immutable ch
 The `assistant/retrieval` package owns access to indexed knowledge. `KnowledgeChunk` is the persistence-agnostic knowledge model, `KnowledgeRetrievalRepository` owns pgvector access, and `RetrievalService` orchestrates question embedding and similarity retrieval. `PromptBuilder` assembles the ordered, bounded context for the chat flow. Document ingestion remains external.
 
 Knowledge is produced outside the backend by the local n8n pipeline. Production consumes indexed chunks from the future vector store through retrieval adapters and never processes source documents or generates embeddings.
+
+The assistant hardening responsibilities remain outside the domain: input validation/orchestration is application behavior, prompt assembly is an application service, and rate limiting/provider resilience are infrastructure concerns.

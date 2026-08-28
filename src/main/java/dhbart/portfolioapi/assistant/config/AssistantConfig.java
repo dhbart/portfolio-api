@@ -11,7 +11,8 @@ import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAsync
-@EnableConfigurationProperties({AiProperties.class, RetrievalProperties.class, EmbeddingProperties.class})
+@EnableConfigurationProperties({AiProperties.class, RetrievalProperties.class, EmbeddingProperties.class,
+        AssistantHardeningProperties.class, OpenAiResilienceProperties.class})
 public class AssistantConfig {
 
     @Bean
@@ -26,6 +27,17 @@ public class AssistantConfig {
         executor.setMaxPoolSize(4);
         executor.setQueueCapacity(100);
         executor.setThreadNamePrefix("knowledge-processing-");
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean(name = "assistantAiExecutor")
+    Executor assistantAiExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(4);
+        executor.setMaxPoolSize(8);
+        executor.setQueueCapacity(32);
+        executor.setThreadNamePrefix("assistant-ai-");
         executor.initialize();
         return executor;
     }

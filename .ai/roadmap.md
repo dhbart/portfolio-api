@@ -524,6 +524,19 @@ Status: **completed**
 - [x] Configure the key with `portfolio.security.admin-api-key` and `PORTFOLIO_ADMIN_API_KEY`.
 - [x] Return HTTP 401 for missing or invalid keys and fail closed without a configured secret.
 - [x] Keep the public API, icons, Swagger/OpenAPI, health, and `POST /api/v1/assistant/chat` public.
-- [x] Keep Basic Authentication, JWT, OAuth, rate limiting, and abuse protection out of scope.
+- [x] Keep Basic Authentication, JWT, and OAuth out of scope; assistant rate limiting is implemented in Sprint 15.
 - [x] Record ADR-036 and synchronize security documentation.
+
+### Sprint 15 - AI Hardening Sprint
+
+Status: **completed**
+
+- [x] Bucket4j per-IP limiting with localized `429` and `Retry-After`.
+- [x] Global validation, security, malformed-request, business, timeout, rate-limit, and provider error handling.
+- [x] Prompt trust boundaries, configurable message/prompt limits, and injection checks.
+- [x] Resilience4j retry, circuit breaker, timeout, and bulkhead with safe fallback.
+- [x] Assistant responsibility split and removal of the legacy vector-only compatibility path.
+- [x] Operational-only AI logging and focused hardening tests.
+
+The limiter is process-local until horizontal deployment justifies a shared store.
 
