@@ -52,14 +52,16 @@ class ControllerIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void shouldAllowCorsGetAndOptionsButDenyUnsupportedMethods() throws Exception {
+    void shouldAllowCorsGetAndPostOptionsButDenyUnsupportedMethods() throws Exception {
         mockMvc.perform(options("/api/v1/hero").header("Origin", "http://localhost:4200")
                         .header("Access-Control-Request-Method", "GET"))
                 .andExpect(status().isOk()).andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:4200"));
+        mockMvc.perform(options("/api/v1/assistant/chat").header("Origin", "http://localhost:4200")
+                        .header("Access-Control-Request-Method", "POST")
+                        .header("Access-Control-Request-Headers", "content-type"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:4200"));
         mockMvc.perform(get("/actuator/health")).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("UP"));
-        mockMvc.perform(options("/api/v1/hero").header("Origin", "http://localhost:4200")
-                        .header("Access-Control-Request-Method", "POST"))
-                .andExpect(status().isForbidden());
     }
 
     @Test

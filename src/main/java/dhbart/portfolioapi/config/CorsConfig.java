@@ -18,12 +18,14 @@ public class CorsConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
 
+
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of(frontendOrigin));
 
         configuration.setAllowedMethods(List.of(
                 "GET",
+                "POST",
                 "OPTIONS"
         ));
 
