@@ -8,6 +8,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -69,5 +70,29 @@ class ControllerIntegrationTest extends IntegrationTestBase {
         mockMvc.perform(get("/api/v1/projects").header("Accept-Language", "en-US")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/projects").header("Accept-Language", "en-US")).andExpect(status().isOk());
         assertThat(cacheManager.getCache("projects").get("en-US")).isNotNull();
+    }
+
+    @Test
+    void shouldProtectAdminEndpointsWithConfiguredApiKey() throws Exception {
+        mockMvc.perform(post("/api/v1/admin/knowledge/process/{documentId}",
+                        "00000000-0000-0000-0000-000000000000"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(post("/api/v1/admin/knowledge/process/{documentId}",
+                        "00000000-0000-0000-0000-000000000000")
+                        .header("X-API-KEY", "wrong-key"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(post("/api/v1/admin/knowledge/process/{documentId}",
+                        "00000000-0000-0000-0000-000000000000")
+                        .header("X-API-KEY", "test-admin-key"))
+                .andExpect(status().isAccepted());
+    }
+
+    @Test
+    void shouldKeepAssistantChatPublic() throws Exception {
+        mockMvc.perform(post("/api/v1/assistant/chat").contentType("application/json")
+                        .content("{}"))
+                .andExpect(result -> assertThat(result.getResponse().getStatus()).isNotEqualTo(401));
     }
 }

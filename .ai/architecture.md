@@ -504,3 +504,9 @@ Response
 All vector SQL is owned by `KnowledgeRetrievalRepository`. Retrieval returns chunks in similarity order, and `PromptBuilder` stops context assembly at `assistant.ai.retrieval.max-context-length`. Empty retrieval adds the internal `No relevant knowledge was found.` notice without failing the request.
 
 The endpoint returns `202 Accepted` and processing runs asynchronously. Existing embeddings are never regenerated. A provider or persistence error marks the document `FAILED`, records `error_message` and sets `processing_finished_at`.
+
+## Security Hardening Sprint 14
+
+Spring Security applies a stateless API-key boundary to every `/api/v1/admin/**` request. Clients must provide `X-API-KEY`; the expected value is bound from `portfolio.security.admin-api-key` and can be overridden with `PORTFOLIO_ADMIN_API_KEY`. Missing, blank, or invalid keys return HTTP 401. Validation lives in the reusable `AdminApiKeyFilter`, not in controllers, and compares key bytes in constant time.
+
+The portfolio resources, `/icons/**`, Swagger/OpenAPI, `/actuator/health`, and `POST /api/v1/assistant/chat` remain public. Basic Authentication, JWT, OAuth, rate limiting, and abuse protection remain deferred.

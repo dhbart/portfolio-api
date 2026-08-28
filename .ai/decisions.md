@@ -926,3 +926,25 @@ PostgreSQL is authoritative for current profile facts and relational portfolio d
 ### Consequences
 
 `PromptBuilder` is independent of storage providers and future retrieval branches can be added to the hybrid orchestration. Keyword selection is deliberately simple and must be extended when new structured entities or terminology are introduced. The configured vector top-k and context length remain the performance limits.
+
+---
+
+## ADR-036 - Admin API-key security boundary
+
+### Status
+
+Accepted and implemented in Sprint 14.
+
+### Decision
+
+Every endpoint under `/api/v1/admin/**` is protected by a stateless Spring Security filter. Clients must provide the expected value in `X-API-KEY`. The expected value is typed configuration at `portfolio.security.admin-api-key` and may be supplied through `PORTFOLIO_ADMIN_API_KEY`. Missing, blank, or invalid keys return HTTP 401.
+
+The filter authenticates valid requests before authorization and is applied outside controllers. Public portfolio endpoints, static icons, Swagger/OpenAPI, `/actuator/health`, and `POST /api/v1/assistant/chat` remain public. Basic Authentication, JWT, OAuth, rate limiting, and abuse protection are deferred.
+
+### Reason
+
+The current administrative surface is machine-to-machine and requires a small, focused boundary for this sprint. A reusable filter preserves controller responsibility and leaves a clear migration path for stronger authentication later.
+
+### Consequences
+
+The application fails closed when the configured key is absent. API-key comparison uses constant-time byte comparison. API-key rotation currently requires configuration change and application restart.

@@ -146,3 +146,15 @@
 - [x] Execute structured retrieval before vector retrieval and preserve configured top-k.
 - [x] Add hybrid orchestration and failure-isolation tests.
 - [x] Update architecture, roadmap, decisions, and knowledge-platform documentation.
+
+## Sprint 14 - Security Hardening
+
+- [x] Protect every `/api/v1/admin/**` endpoint with `X-API-KEY`.
+- [x] Read the expected key from typed `portfolio.security.admin-api-key` configuration.
+- [x] Support `PORTFOLIO_ADMIN_API_KEY` as the environment-variable override.
+- [x] Return HTTP 401 for missing, blank, or invalid keys.
+- [x] Keep portfolio resources, icons, Swagger/OpenAPI, health, and assistant chat public.
+- [x] Keep API-key validation in a reusable Spring Security filter; no controller-level security logic.
+- [x] Keep Basic Authentication, JWT, OAuth, rate limiting, and abuse protection out of scope.
+- [x] Add MockMvc coverage for missing, invalid, and valid admin keys and public assistant chat.
+- [x] Synchronize security architecture, standards, decisions, roadmap, README, and environment documentation.

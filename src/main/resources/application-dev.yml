@@ -32,6 +32,8 @@ management:
         enabled: true
 
 portfolio:
+  security:
+    admin-api-key: ${PORTFOLIO_ADMIN_API_KEY:}
   cors:
     allowed-origin: ${FRONTEND_ORIGIN:http://localhost:4200}
 

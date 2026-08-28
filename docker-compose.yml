@@ -44,6 +44,11 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-portfolio}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-portfolio}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      PORTFOLIO_ADMIN_API_KEY: ${PORTFOLIO_ADMIN_API_KEY}
+      JAVA_OPTS: >
+        -XX:MaxRAMPercentage=70
+        -XX:+ExitOnOutOfMemoryError
+        -Dspring.profiles.active=prod
 
     ports:
       - "8080:8080"

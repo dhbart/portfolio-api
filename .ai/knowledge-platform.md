@@ -79,3 +79,5 @@ Vector Search through a pgvector adapter, RAG context assembly, Conversation Mem
 - **Knowledge Base:** The curated collection of indexed knowledge assets.
 - **Knowledge Platform:** A system that ingests, stores, retrieves, and presents knowledge.
 - **Ingestion Pipeline:** A workflow transforming sources into stored chunks and embeddings.
+
+The knowledge processing endpoint `POST /api/v1/admin/knowledge/process/{documentId}` is an administrative operation protected by the platform `X-API-KEY` boundary. The public assistant chat endpoint remains unauthenticated during Sprint 14.

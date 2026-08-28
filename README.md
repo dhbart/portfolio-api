@@ -138,7 +138,9 @@ http://localhost:8080/v3/api-docs
 
 The current API is deliberately **public and read-only**. `GET` and CORS preflight `OPTIONS` requests are allowed for the public API and icon resources; unsupported methods are denied. CORS is constrained to `FRONTEND_ORIGIN`, and `/actuator/health` is public for deployment health checks. Authentication is not required for consuming portfolio content.
 
-JWT authentication and role-based authorization are planned for a future administrative API, when content-management operations (`POST`, `PUT`, `PATCH`, and `DELETE`) are introduced.
+Every `/api/v1/admin/**` endpoint requires `X-API-KEY`; missing or invalid keys return `401 Unauthorized`. Configure the expected value with `PORTFOLIO_ADMIN_API_KEY`, bound to `portfolio.security.admin-api-key`. `POST /api/v1/assistant/chat` remains public during this sprint.
+
+Basic Authentication, JWT, and OAuth are planned for future authentication work. Rate limiting and abuse protection are also deferred.
 
 ## Prerequisites
 
@@ -162,6 +164,7 @@ The datasource is assembled from the following environment variables. Keep crede
 | `FRONTEND_ORIGIN` | Allowed Angular frontend origin | `http://localhost:4200` |
 | `OPENAI_API_KEY` | OpenAI API key for the assistant | not committed |
 | `PORTFOLIO_AI_ENABLED` | Enables assistant generation | `true` |
+| `PORTFOLIO_ADMIN_API_KEY` | API key required by `/api/v1/admin/**` | not committed |
 | `PORTFOLIO_AI_MODEL` | OpenAI chat model | `gpt-4o-mini` |
 | `PORTFOLIO_RETRIEVAL_ENABLED` | Enables future knowledge retrieval | `false` |
 | `PORTFOLIO_RETRIEVAL_VECTOR_STORE` | Future vector-store identifier | `supabase-pgvector` |

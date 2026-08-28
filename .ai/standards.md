@@ -589,3 +589,12 @@ icons at runtime, persist external icon URLs, or expose provider URLs.
 - Keep assistant services stateless until a memory ADR is accepted.
 - Production uses Spring AI directly with OpenAI; n8n and OmniRoute are not runtime dependencies.
 - The backend does not process documents or generate embeddings.
+
+## Security Standards
+
+- Protect every `/api/v1/admin/**` endpoint with the configured `X-API-KEY`.
+- Keep API-key validation in reusable Spring Security infrastructure, never in controllers.
+- Read the expected key from typed `portfolio.security.admin-api-key` configuration and support `PORTFOLIO_ADMIN_API_KEY` as the environment override.
+- Return HTTP 401 for missing, blank, or invalid keys and fail closed when no key is configured.
+- Keep the public portfolio API, static icons, Swagger/OpenAPI, health check, and `POST /api/v1/assistant/chat` public until a later sprint changes their policy.
+- Do not introduce Basic Authentication, JWT, or OAuth as part of this sprint.

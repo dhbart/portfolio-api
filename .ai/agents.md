@@ -8,6 +8,7 @@ API backend do portfólio pessoal dhbart.
 - Spring Boot 4.0.7
 - Gradle 9.7.0
 - PostgreSQL
+- Spring Security with API-key protection for `/api/v1/admin/**`
 - Spring Data JPA
 - Flyway
 - Bean Validation

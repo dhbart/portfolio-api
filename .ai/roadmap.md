@@ -516,3 +516,14 @@ V3 is knowledge-first: the knowledge base is the source of truth and the LLM onl
 
 - [ ] Add protected knowledge source management, indexing status, and versioning.
 
+### Sprint 14 - Security Hardening
+
+Status: **completed**
+
+- [x] Protect every `/api/v1/admin/**` endpoint with `X-API-KEY`.
+- [x] Configure the key with `portfolio.security.admin-api-key` and `PORTFOLIO_ADMIN_API_KEY`.
+- [x] Return HTTP 401 for missing or invalid keys and fail closed without a configured secret.
+- [x] Keep the public API, icons, Swagger/OpenAPI, health, and `POST /api/v1/assistant/chat` public.
+- [x] Keep Basic Authentication, JWT, OAuth, rate limiting, and abuse protection out of scope.
+- [x] Record ADR-036 and synchronize security documentation.
+
