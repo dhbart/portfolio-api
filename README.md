@@ -32,6 +32,7 @@ The backend follows production-minded practices: feature-first organization, HTT
 - Integration tests using Testcontainers and PostgreSQL
 - Spring AI foundation for direct OpenAI chat generation
 - Retrieval foundation with provider-independent knowledge contracts
+- Hybrid retrieval combining PostgreSQL portfolio facts with pgvector knowledge
 
 ## Architecture
 

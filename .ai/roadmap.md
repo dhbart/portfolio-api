@@ -486,6 +486,16 @@ V3 is knowledge-first: the knowledge base is the source of truth and the LLM onl
 - [ ] Add bounded context assembly and grounding tests.
 - [ ] Keep ingestion and embedding generation outside the production runtime.
 
+### Sprint 4.0 — Hybrid Retrieval — completed
+
+- [x] Retrieve profile, experience, projects, certifications, technologies, and social links from PostgreSQL through existing services.
+- [x] Keep pgvector retrieval behind a dedicated vector retrieval service.
+- [x] Orchestrate both sources through `HybridRetrievalService`.
+- [x] Build a structured, deduplicated, source-neutral context.
+- [x] Prioritize structured facts and preserve descriptive vector knowledge.
+- [x] Isolate source failures and preserve configured top-k and bounded prompt context.
+- [x] Add unit coverage and document trade-offs and future provider extensibility.
+
 ### V3.4 — Frontend Chat — planned
 
 - [ ] Integrate Angular chat with loading, error, and empty states.

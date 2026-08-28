@@ -1,5 +1,6 @@
 package dhbart.portfolioapi.assistant.prompt;
 
+import dhbart.portfolioapi.assistant.retrieval.model.Context;
 import dhbart.portfolioapi.assistant.retrieval.model.KnowledgeChunk;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -7,6 +8,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class PromptBuilder {
     private static final String EMPTY_CONTEXT_WARNING = "No relevant knowledge was found.";
+
+    public String build(String systemPrompt, Context context, String question, int maxContextLength) {
+        StringBuilder assembled = new StringBuilder();
+        context.structuredSections().forEach((section, content) -> append(assembled, section, content, maxContextLength));
+        if (!context.vectorChunks().isEmpty()) {
+            append(assembled, "VECTOR KNOWLEDGE", context.vectorChunks().stream()
+                    .map(KnowledgeChunk::getContent).reduce((a, b) -> a + "\n\n" + b).orElse(""), maxContextLength);
+        }
+        if (assembled.isEmpty()) assembled.append(EMPTY_CONTEXT_WARNING);
+        return systemPrompt + "\n\nContext\n\n" + assembled + "\n\nQuestion\n\n" + question;
+    }
+
+    private void append(StringBuilder target, String section, String content, int maxLength) {
+        if (content == null || content.isBlank()) return;
+        String candidate = (target.isEmpty() ? "" : "\n\n") + section + "\n" + content;
+        if (target.length() + candidate.length() <= maxLength) target.append(candidate);
+    }
 
     public String build(String systemPrompt, List<KnowledgeChunk> chunks, String question, int maxContextLength) {
         StringBuilder context = new StringBuilder();

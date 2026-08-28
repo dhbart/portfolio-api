@@ -2,7 +2,7 @@ package dhbart.portfolioapi.assistant.controller;
 
 import dhbart.portfolioapi.assistant.model.ChatRequest;
 import dhbart.portfolioapi.assistant.model.ChatResponse;
-import dhbart.portfolioapi.assistant.service.ChatService;
+import dhbart.portfolioapi.assistant.service.AssistantService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/assistant")
 public class AssistantController {
 
-    private final ChatService assistantService;
+    private final AssistantService assistantService;
 
-    public AssistantController(ChatService assistantService) {
+    public AssistantController(AssistantService assistantService) {
         this.assistantService = assistantService;
     }
 

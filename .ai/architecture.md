@@ -439,6 +439,23 @@ V3.2 prepares these contracts only. There is no vector search, pgvector query, e
 
 # Architecture
 
+## Sprint 4.0 — Hybrid Retrieval
+
+Chat retrieval now uses two independent sources. `HybridRetrievalService` is the only retrieval entry point used by chat and orchestrates `StructuredRetrievalService` (existing feature application services backed by PostgreSQL) before `VectorRetrievalService` (the existing embedding and pgvector path).
+
+```text
+AssistantService -> ChatService -> HybridRetrievalService
+                                  ├─ StructuredRetrievalService -> portfolio services -> PostgreSQL
+                                  └─ VectorRetrievalService -> RetrievalService -> pgvector
+                                  -> ContextBuilder -> Context -> PromptBuilder -> OpenAI
+```
+
+Structured retrieval uses lightweight question terms to select only relevant aggregates. It prioritizes profile, experience, projects, certifications, technologies, and social links for factual portfolio questions. Vector retrieval remains complementary for descriptive knowledge such as ERP, leadership, migrations, CV material, and notes. Structured sections are inserted first; duplicate vector content is discarded before prompt assembly.
+
+`Context` is source-neutral. `PromptBuilder` receives the assembled object and only formats ordered sections and the bounded context; it does not know how data was stored. Retrieval failures are isolated: one successful branch is sufficient, while both failures are propagated as a retrieval error. Retrieval logs contain counts and timings, never credentials or prompt contents.
+
+The design keeps future providers extensible: a web, GitHub, blog, or LinkedIn provider can be added to the hybrid orchestration without changing prompt generation. The trade-off is a small keyword classifier rather than a second LLM/router call; this avoids extra latency, embeddings, and SQL reads while remaining easy to extend.
+
 ## Sprint 3.3 — AI Processing Service
 
 Document ingestion remains the responsibility of n8n. After n8n stores a document and its chunks, it calls the backend processing endpoint. The backend owns provider access, embedding persistence, status transitions and error recovery.

@@ -133,3 +133,16 @@
 - [x] Unit tests for processing service, provider adapter and controller
 - [x] Architecture and flow documentation
 - [x] No frontend or n8n workflow changes
+
+## Sprint 4.0 — Hybrid Retrieval
+
+- [x] Add `StructuredRetrievalService` using existing portfolio application services.
+- [x] Add `VectorRetrievalService` over the existing pgvector retrieval boundary.
+- [x] Add `HybridRetrievalService` as the single retrieval entry point for chat.
+- [x] Retrieve structured sources selectively for profile, experience, projects, certifications, technologies, and social links.
+- [x] Add typed merged `Context` and refactor `ContextBuilder`/`PromptBuilder` for structured and vector sections.
+- [x] Prefer structured content and remove duplicate vector chunks.
+- [x] Continue with one source when the other source fails; fail only when both fail.
+- [x] Execute structured retrieval before vector retrieval and preserve configured top-k.
+- [x] Add hybrid orchestration and failure-isolation tests.
+- [x] Update architecture, roadmap, decisions, and knowledge-platform documentation.

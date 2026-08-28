@@ -59,6 +59,12 @@ n8n is never part of the production runtime. OmniRoute is only an optional local
 
 ## Future Evolution
 
+## Sprint 4.0 — Hybrid Retrieval
+
+The production chat path combines structured PostgreSQL data and vector knowledge. Structured retrieval is performed first through existing portfolio services, then vector retrieval runs with the configured top-k. `HybridRetrievalService` merges the results into a source-neutral `Context`, gives structured sections precedence, and removes duplicate vector text. `PromptBuilder` formats the completed context without depending on either storage technology.
+
+The initial retrieval strategy is intentionally lightweight: portfolio fact questions select matching aggregates by question terms, while descriptive or mixed questions retain vector knowledge as complementary context. SQL failures and vector failures are independently tolerated; the request fails only when neither source succeeds. Future retrieval providers can be added as hybrid branches with minimal orchestration changes.
+
 Vector Search through a pgvector adapter, RAG context assembly, Conversation Memory, Streaming Responses, AI Tools / Function Calling, Knowledge Administration, and additional document sources.
 
 ## Glossary

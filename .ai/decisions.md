@@ -908,3 +908,21 @@ Sprint 3.4 implements RAG by making `RetrievalService` an orchestration service:
 ## Persistence isolation
 
 Knowledge processing uses a repository port and a JDBC adapter. JDBC is used because pgvector is a PostgreSQL type; the rest of the application does not need pgvector-specific entities or APIs.
+
+## ADR-035 — Hybrid retrieval prioritizes structured portfolio data
+
+### Status
+
+Accepted and implemented in Sprint 4.0.
+
+### Decision
+
+Chat uses `HybridRetrievalService` as its sole retrieval entry point. It runs structured retrieval first through existing portfolio application services, then vector retrieval through the existing pgvector boundary. `ContextBuilder` creates a source-neutral `Context`; structured sections have precedence and duplicate vector content is removed. A single source may fail without making the request fail; both failures are required for a retrieval error.
+
+### Reason
+
+PostgreSQL is authoritative for current profile facts and relational portfolio data, while pgvector contains descriptive and supplementary knowledge. Reusing existing services prevents duplicated business logic and preserves caching, localization, ordering, and repository behavior. A lightweight selector avoids extra model calls and unnecessary SQL or embeddings.
+
+### Consequences
+
+`PromptBuilder` is independent of storage providers and future retrieval branches can be added to the hybrid orchestration. Keyword selection is deliberately simple and must be extended when new structured entities or terminology are introduced. The configured vector top-k and context length remain the performance limits.
